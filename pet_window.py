@@ -48,7 +48,13 @@ class PetWindow(QWidget):
         self._label = QLabel(self)
         self._label.setFixedSize(*self._pet_size)
         self._label.setStyleSheet("background: transparent;")
-        self._label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        # Anchor the image to the bottom of the label so its "feet" always
+        # sit at the same y regardless of the cat's aspect ratio. Without
+        # this, a squat/wide cat (e.g. sleeping on a bed) would float
+        # noticeably higher than a tall, upright cat.
+        self._label.setAlignment(
+            Qt.AlignmentFlag.AlignBottom | Qt.AlignmentFlag.AlignHCenter
+        )
 
         # --- Image rotation ---
         self._images = ImageManager(

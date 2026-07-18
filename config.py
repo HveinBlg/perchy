@@ -6,7 +6,9 @@ PET_SIZE = (180, 180)
 
 # How many pixels of the pet's bottom overlap the window's top edge.
 # Larger value => pet sits deeper into the title bar.
-OVERLAP = 30
+# 30 = paws just touch the top edge; 60 = pet's butt/paws sit inside the
+# title bar (looks more like it's actually "sitting on" the window).
+OVERLAP = 60
 
 # How often the pet image is randomly swapped out, in seconds.
 # Default = 3 minutes.
