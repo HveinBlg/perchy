@@ -46,10 +46,12 @@ SWING_PHASE_STEP = 0.09      # radians per frame => ~2.4s per full sway cycle
 
 # --- Where in the maximised window we place the firecrackers ---
 # Widget's RIGHT edge is placed this many pixels left of the window's
-# right edge. The stock Windows minimise / maximise / close cluster is
-# ~138px wide; leaving ~15px extra keeps the firecrackers snug against
-# them without ever overlapping.
-BUTTON_RIGHT_INSET_PX = 150
+# right edge. Chrome / Edge etc. use narrower title-bar system buttons
+# (~90-100px total) than plain Win32 apps (~138px), and users often
+# have a custom "Ask Gemini" / accounts pill just left of those, so
+# ~100 puts the string in the empty slot BETWEEN that pill and the
+# window controls on both layouts.
+BUTTON_RIGHT_INSET_PX = 100
 
 # Vertical inset from the window's top edge (firecracker fuse sits here).
 BUTTON_TOP_INSET_PX = 2
