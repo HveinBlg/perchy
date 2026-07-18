@@ -33,4 +33,7 @@ CLICK_THROUGH = True
 
 # Horizontal position of the pet along the window's top edge.
 # 0.0 = flush left, 0.5 = centered, 1.0 = flush right.
-HORIZONTAL_ANCHOR = 0.5
+# 0.85 sits the pet in the right corner: out of the way of the app icon /
+# title text on the left, but not covering the min/max/close buttons on
+# the far right. Change to 0.15 for a left-corner perch instead.
+HORIZONTAL_ANCHOR = 0.85
