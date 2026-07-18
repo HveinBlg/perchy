@@ -78,6 +78,14 @@ class PetWindow(QWidget):
         self._clamp_to_screen = bool(getattr(config, "CLAMP_TO_SCREEN", True))
         self._anchor = float(config.HORIZONTAL_ANCHOR)
 
+        # --- Mutable runtime state (declared UP FRONT so that anything
+        # invoked from later in __init__ -- e.g. the initial
+        # _on_image_changed() call from ImageManager setup -- doesn't
+        # AttributeError trying to read them). ---
+        self._ex_style_applied = False
+        self._in_button_mode = False
+        self._tracked_hwnd: Optional[int] = None
+
         # --- Window flags: frameless, always on top, no taskbar entry.
         # We intentionally do NOT set Qt.WindowTransparentForInput here:
         # click-through is managed purely at the Win32 layer via
@@ -133,10 +141,6 @@ class PetWindow(QWidget):
         self._track_timer.setInterval(int(config.TRACK_INTERVAL_MS))
         self._track_timer.timeout.connect(self._on_tick)
         self._track_timer.start()
-
-        self._ex_style_applied = False
-        self._in_button_mode = False
-        self._tracked_hwnd: Optional[int] = None
 
     # ------------------------------------------------------------------
     # Qt event overrides
