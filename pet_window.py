@@ -14,8 +14,8 @@ Two visual modes, chosen every tick based on the active window's state:
 
 from __future__ import annotations
 
-import ctypes
 import math
+import sys
 from typing import Optional
 
 from PyQt6.QtCore import Qt, QTimer, QSize, pyqtSignal
@@ -33,11 +33,19 @@ import config
 from active_window_tracker import ActiveWindowTracker, WindowState
 from image_manager import ImageManager
 
-# --- Win32 extended-window-style bits we set / toggle after showing ---
-GWL_EXSTYLE = -20
-WS_EX_NOACTIVATE = 0x08000000  # clicks/focus never activate our window
-WS_EX_TOOLWINDOW = 0x00000080  # hide from Alt-Tab and taskbar
-WS_EX_TRANSPARENT = 0x00000020  # mouse events pass through us
+IS_WINDOWS = sys.platform.startswith("win")
+IS_MACOS = sys.platform == "darwin"
+
+if IS_WINDOWS:
+    # Only load Win32 helpers when we're actually on Windows; importing
+    # ctypes.windll on macOS/Linux would fail.
+    import ctypes  # noqa: F401 -- used below
+
+    # --- Win32 extended-window-style bits we set / toggle after showing ---
+    GWL_EXSTYLE = -20
+    WS_EX_NOACTIVATE = 0x08000000  # clicks/focus never activate our window
+    WS_EX_TOOLWINDOW = 0x00000080  # hide from Alt-Tab and taskbar
+    WS_EX_TRANSPARENT = 0x00000020  # mouse events pass through us
 
 # --- Swing animation parameters (firecrackers gently sway) ---
 SWING_ANGLE_DEG = 9.0        # max rotation each side of centre (degrees)
@@ -217,6 +225,11 @@ class PetWindow(QWidget):
     # Win32 tweaks
     # ------------------------------------------------------------------
     def _apply_win32_base_style(self) -> None:
+        # No-op off-Windows: the Qt.Tool + WA_ShowWithoutActivating flags
+        # already give us the "no dock icon, no focus stealing" behaviour
+        # on macOS, so there's nothing extra to poke.
+        if not IS_WINDOWS:
+            return
         try:
             hwnd = int(self.winId())
             user32 = ctypes.windll.user32
@@ -229,7 +242,17 @@ class PetWindow(QWidget):
             pass
 
     def _set_click_through(self, enabled: bool) -> None:
-        """Runtime toggle of WS_EX_TRANSPARENT (click-through)."""
+        """Runtime toggle of click-through (mouse-events-pass-through).
+
+        On Windows we flip WS_EX_TRANSPARENT via SetWindowLongW.
+        On macOS the equivalent NSWindow property is
+        ``ignoresMouseEvents``; toggling it at runtime through PyQt6 is
+        fiddly, and we currently don't need it (button mode is
+        Windows-only for now), so this is a no-op there. When we add
+        firecracker mode to macOS we'll wire this up via pyobjc.
+        """
+        if not IS_WINDOWS:
+            return
         try:
             hwnd = int(self.winId())
             user32 = ctypes.windll.user32

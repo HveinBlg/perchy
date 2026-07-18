@@ -1,1 +1,7 @@
 PyQt6>=6.5
+
+# macOS-only: bridge to AppKit and the Accessibility API.
+# Cocoa gives us AppKit.NSWorkspace / NSApplication; Quartz brings the
+# AXUIElement family (AXFocusedWindow, AXPosition, AXSize, etc).
+pyobjc-framework-Cocoa>=10.0; sys_platform == "darwin"
+pyobjc-framework-Quartz>=10.0; sys_platform == "darwin"
