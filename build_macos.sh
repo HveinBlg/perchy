@@ -54,9 +54,28 @@ cp -R assets dist/
 [ -f "使用说明.txt" ]     && cp "使用说明.txt"     dist/
 [ -f "使用说明_macOS.txt" ] && cp "使用说明_macOS.txt" dist/
 
+# ---- optional: also wrap it as a .dmg (macOS-native distribution format) ----
+# Users prefer .dmg on macOS: double-click mounts it, drag Perchy.app
+# to /Applications, done. Uses hdiutil which is built into every macOS.
+VERSION="${1:-dev-$(date -u +%Y%m%d-%H%M%S)}"
+
+rm -rf dist/dmg-staging
+mkdir -p dist/dmg-staging
+cp -R dist/Perchy.app dist/dmg-staging/
+cp -R dist/assets     dist/dmg-staging/
+[ -f "dist/使用说明.txt" ]       && cp "dist/使用说明.txt"       dist/dmg-staging/ || true
+[ -f "dist/使用说明_macOS.txt" ] && cp "dist/使用说明_macOS.txt" dist/dmg-staging/ || true
+ln -s /Applications dist/dmg-staging/Applications
+
+hdiutil create \
+    -volname "Perchy $VERSION" \
+    -srcfolder dist/dmg-staging \
+    -ov \
+    -format UDZO \
+    "dist/Perchy-v${VERSION}-macos.dmg"
+
 echo ""
 echo "=== Build complete ==="
-echo "Output: dist/Perchy.app"
-echo ""
-echo "To share, zip the whole dist folder:"
-echo "  (cd dist && zip -r ../perchy-macos.zip .)"
+echo "Output:"
+echo "  dist/Perchy.app                    (the app bundle)"
+echo "  dist/Perchy-v${VERSION}-macos.dmg  (ready to share)"

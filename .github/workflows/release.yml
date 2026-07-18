@@ -86,7 +86,7 @@ jobs:
             at login, adding your own pet images, etc.).
 
   # ---------------------------------------------------------------------
-  # macOS (Apple Silicon) -> Perchy-vX.Y.Z-macos.zip
+  # macOS (Apple Silicon)  ->  Perchy-vX.Y.Z-macos.dmg
   # ---------------------------------------------------------------------
   build-macos:
     runs-on: macos-latest
@@ -113,37 +113,53 @@ jobs:
             --osx-bundle-identifier com.hveinblg.perchy \
             main.py
 
-      - name: Info.plist -> LSUIElement (hide from Dock)
+      - name: Info.plist tweaks (LSUIElement + version string)
         run: |
-          /usr/libexec/PlistBuddy \
-            -c "Delete :LSUIElement" \
-            dist/Perchy.app/Contents/Info.plist 2>/dev/null || true
-          /usr/libexec/PlistBuddy \
-            -c "Add :LSUIElement bool true" \
-            dist/Perchy.app/Contents/Info.plist
+          VERSION="${GITHUB_REF_NAME#v}"
+          [ -z "$VERSION" ] && VERSION="dev-$(date -u +%Y%m%d-%H%M%S)"
+          PLIST="dist/Perchy.app/Contents/Info.plist"
+          /usr/libexec/PlistBuddy -c "Delete :LSUIElement" "$PLIST" 2>/dev/null || true
+          /usr/libexec/PlistBuddy -c "Add :LSUIElement bool true" "$PLIST"
+          /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $VERSION" "$PLIST" 2>/dev/null || \
+            /usr/libexec/PlistBuddy -c "Add :CFBundleShortVersionString string $VERSION" "$PLIST"
 
-      - name: Copy user-facing files alongside the .app
+      - name: Prepare DMG staging (app + user-editable assets + docs)
         run: |
-          cp -R assets dist/
-          [ -f "使用说明.txt" ]       && cp "使用说明.txt"       dist/ || true
-          [ -f "使用说明_macOS.txt" ] && cp "使用说明_macOS.txt" dist/ || true
+          rm -rf dist/dmg-staging
+          mkdir -p dist/dmg-staging
+          # The .app itself
+          cp -R dist/Perchy.app dist/dmg-staging/
+          # User-editable pet images live NEXT TO the .app -- our
+          # main.py's _app_dir() finds them there when the .app is
+          # launched. Users can drop their own PNGs into
+          # dmg-staging/assets/pets/ after installing.
+          cp -R assets dist/dmg-staging/
+          [ -f "使用说明.txt" ]       && cp "使用说明.txt"       dist/dmg-staging/ || true
+          [ -f "使用说明_macOS.txt" ] && cp "使用说明_macOS.txt" dist/dmg-staging/ || true
+          # Handy shortcut so users can drag Perchy.app straight to /Applications.
+          ln -s /Applications "dist/dmg-staging/Applications"
 
-      - name: Zip release
+      - name: Create DMG
         run: |
-          VERSION="${GITHUB_REF_NAME:-manual-$(date -u +%Y%m%d-%H%M%S)}"
-          cd dist
-          zip -r "../Perchy-${VERSION}-macos.zip" .
-          cd ..
-          ls -la Perchy-*.zip
+          VERSION="${GITHUB_REF_NAME#v}"
+          [ -z "$VERSION" ] && VERSION="dev-$(date -u +%Y%m%d-%H%M%S)"
+          # UDZO = zlib-compressed, small and universally openable.
+          hdiutil create \
+            -volname "Perchy $VERSION" \
+            -srcfolder dist/dmg-staging \
+            -ov \
+            -format UDZO \
+            "Perchy-v${VERSION}-macos.dmg"
+          ls -la Perchy-*.dmg
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: perchy-macos
-          path: Perchy-*-macos.zip
+          path: Perchy-*-macos.dmg
 
       - name: Publish to Releases (tag pushes only)
         if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
         with:
-          files: Perchy-*-macos.zip
+          files: Perchy-*-macos.dmg

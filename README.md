@@ -13,9 +13,11 @@ Grab the latest zip for your OS from the
 
 - **Windows**: download `perchy-vX.Y.Z-windows-x64.zip`, extract, double-click
   `perchy.exe`. Full quickstart in `使用说明.txt` inside the zip.
-- **macOS**: download `Perchy-vX.Y.Z-macos.zip`, extract, double-click
-  `Perchy.app`. First launch needs Accessibility permission — see
-  `使用说明_macOS.txt` inside the zip.
+- **macOS**: download `Perchy-vX.Y.Z-macos.dmg`, double-click to mount,
+  drag `Perchy.app` **and** the `assets` folder into the same
+  location (e.g. `/Applications`), then double-click `Perchy.app`.
+  First launch needs Accessibility permission — see
+  `使用说明_macOS.txt` inside the disk image.
 
 No Python or git required.
 
@@ -139,13 +141,13 @@ Compress-Archive -Path dist\perchy -DestinationPath perchy-windows-x64.zip -Forc
 
 **macOS**:
 ```bash
-./build_macos.sh
+./build_macos.sh v1.2.2
 ```
-Produces `dist/Perchy.app` with the assets folder and Chinese quickstart
-next to it. Zip:
-```bash
-(cd dist && zip -r ../perchy-macos.zip .)
-```
+Produces both `dist/Perchy.app` (raw bundle) and
+`dist/Perchy-v1.2.2-macos.dmg` (compressed disk image ready to
+share — double-click to mount, drag app to Applications). The version
+string is only used for the DMG filename + Info.plist; pass whatever
+tag you're building for.
 
 ### Option B: let GitHub Actions build both
 
