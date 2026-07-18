@@ -211,6 +211,23 @@ work against either PyQt5 or PyQt6:
   `qt_compat` monkey-patches PyQt5's flat enums to look like PyQt6's
   scoped ones before any other module imports Qt symbols.
 
+## Retrospective
+
+The full one-day journey — 21 concrete pitfalls we hit, their root
+causes, fixes, and lessons — is captured in Chinese here:
+
+**[docs/项目复盘.md](docs/项目复盘.md)**
+
+Categories:
+
+- Environment & toolchain (Python 3.7 vs PyQt6, sandbox network limits)
+- Image processing (premultiplied alpha, background detection)
+- UI positioning (invisible padding, bisect logic, maximised-window sink)
+- Code bugs (init order, Qt method typos)
+- Git & branches (revert-then-merge conflicts, wrong-branch commits)
+- Packaging & distribution (stop.bat vs perchy.exe, SmartScreen, dmg vs zip)
+- macOS legacy support (PyQt5 fallback, LSMinimumSystemVersion)
+
 ## Known limits
 
 - Exclusive-fullscreen apps (some games) draw over the pet.
