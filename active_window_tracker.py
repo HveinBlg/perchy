@@ -7,7 +7,7 @@ from __future__ import annotations
 
 import ctypes
 from ctypes import wintypes
-from typing import Optional, Tuple
+from typing import NamedTuple, Optional
 
 user32 = ctypes.windll.user32
 dwmapi = ctypes.windll.dwmapi
@@ -16,14 +16,17 @@ dwmapi = ctypes.windll.dwmapi
 DWMWA_CLOAKED = 14
 DWMWA_EXTENDED_FRAME_BOUNDS = 9
 
+# --- ShowWindow commands ---
+SW_RESTORE = 9
+
 # Window class names we always want to ignore (desktop / shell).
 SHELL_CLASSES = {
-    "Progman",         # desktop
-    "WorkerW",         # desktop worker
-    "Shell_TrayWnd",   # taskbar
-    "Shell_SecondaryTrayWnd",  # taskbar on secondary monitors
-    "DV2ControlHost",  # start menu (older)
-    "Windows.UI.Core.CoreWindow",  # start menu / notification center on Win10/11
+    "Progman",
+    "WorkerW",
+    "Shell_TrayWnd",
+    "Shell_SecondaryTrayWnd",
+    "DV2ControlHost",
+    "Windows.UI.Core.CoreWindow",
 }
 
 
@@ -34,6 +37,17 @@ class RECT(ctypes.Structure):
         ("right", ctypes.c_long),
         ("bottom", ctypes.c_long),
     ]
+
+
+class WindowState(NamedTuple):
+    """Everything the pet needs to know about the active window in one tick."""
+
+    hwnd: int
+    left: int
+    top: int
+    right: int
+    bottom: int
+    is_maximized: bool
 
 
 def _get_class_name(hwnd: int) -> str:
@@ -69,7 +83,7 @@ def _get_extended_bounds(hwnd: int) -> Optional[RECT]:
 
 
 class ActiveWindowTracker:
-    """Reads the foreground window's screen rectangle.
+    """Reads the foreground window's screen rectangle and maximised state.
 
     `self_hwnd_getter` returns our own pet window's HWND so we can skip it
     (otherwise focusing the pet would make it try to follow itself).
@@ -78,7 +92,7 @@ class ActiveWindowTracker:
     def __init__(self, self_hwnd_getter=None):
         self.self_hwnd_getter = self_hwnd_getter
 
-    def get_active_window_rect(self) -> Optional[Tuple[int, int, int, int]]:
+    def get_active_window_state(self) -> Optional[WindowState]:
         hwnd = user32.GetForegroundWindow()
         if not hwnd:
             return None
@@ -104,11 +118,32 @@ class ActiveWindowTracker:
 
         # DwmGetWindowAttribute(EXTENDED_FRAME_BOUNDS) gives us the "visible"
         # bounds excluding the invisible drop-shadow padding that
-        # GetWindowRect includes on Win10+. Much more accurate for placement.
+        # GetWindowRect includes on Win10+.
         rect = _get_extended_bounds(hwnd)
         if rect is None:
             rect = RECT()
             if not user32.GetWindowRect(hwnd, ctypes.byref(rect)):
                 return None
 
-        return (rect.left, rect.top, rect.right, rect.bottom)
+        is_maximized = bool(user32.IsZoomed(hwnd))
+
+        return WindowState(
+            hwnd=int(hwnd),
+            left=rect.left,
+            top=rect.top,
+            right=rect.right,
+            bottom=rect.bottom,
+            is_maximized=is_maximized,
+        )
+
+    def restore_window(self, hwnd: int) -> None:
+        """Un-maximize (or un-minimize) the given window.
+
+        Equivalent to clicking the Windows 'Restore Down' button. Works
+        even when our pet window has focus, because ShowWindow doesn't
+        require the target to be foreground.
+        """
+        try:
+            user32.ShowWindow(wintypes.HWND(hwnd), SW_RESTORE)
+        except Exception:
+            pass
