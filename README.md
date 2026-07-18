@@ -45,9 +45,39 @@ every image in that folder.
 
 ## Run
 
+Three ways, pick whichever suits you:
+
+### 1. Foreground (dev mode)
+
+Good for tweaking `config.py` and seeing output/errors.
+
 ```powershell
 python main.py
 ```
+
+Closing the terminal (or Ctrl+C) will kill the pet.
+
+### 2. Background (recommended for daily use)
+
+```powershell
+start pythonw main.py
+```
+
+`pythonw` is Python's windowless launcher. `start` detaches it from the
+terminal so you can close the console and the pet keeps running. Stop it
+via Task Manager (find `pythonw.exe`) or by running `stop.bat`.
+
+### 3. Double-click `run.bat`
+
+Just double-click `run.bat` in the project folder. Same effect as
+option 2, no terminal required.
+
+### Auto-start at Windows login
+
+Press `Win+R`, type `shell:startup`, hit Enter. That opens your Startup
+folder. Right-click `run.bat` in the project folder → **Create shortcut**,
+then move the shortcut into that Startup folder. From next login onward,
+the pet appears automatically. Delete the shortcut to disable.
 
 Focus any window and you should see the pet perched on its top edge.
 Move / resize the window and the pet follows.
@@ -68,7 +98,10 @@ Edit `config.py`:
 
 ## Exit
 
-Kill from the terminal (`Ctrl+C`) or via Task Manager (looks for `python.exe`).
+- **If launched via `python main.py`**: `Ctrl+C` in the terminal.
+- **If launched via `pythonw` / `run.bat`**: double-click `stop.bat`, or
+  open Task Manager, find `pythonw.exe`, end task.
+
 A tray-icon quit menu is on the todo list.
 
 ## Known limits
