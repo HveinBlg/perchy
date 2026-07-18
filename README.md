@@ -13,11 +13,29 @@ Grab the latest zip for your OS from the
 
 - **Windows**: download `perchy-vX.Y.Z-windows-x64.zip`, extract, double-click
   `perchy.exe`. Full quickstart in `使用说明.txt` inside the zip.
-- **macOS**: download `Perchy-vX.Y.Z-macos.dmg`, double-click to mount,
-  drag `Perchy.app` **and** the `assets` folder into the same
-  location (e.g. `/Applications`), then double-click `Perchy.app`.
-  First launch needs Accessibility permission — see
-  `使用说明_macOS.txt` inside the disk image.
+- **macOS (Big Sur 11 or newer)**: download
+  `Perchy-vX.Y.Z-macos.dmg`. Built against PyQt6 + Python 3.12.
+- **macOS (Catalina 10.15)**: download
+  `Perchy-vX.Y.Z-macos-legacy.dmg`. Built against PyQt5 + Python 3.9
+  with `LSMinimumSystemVersion=10.15`. Same features and UX as the
+  modern build.
+
+Either dmg: double-click to mount, drag `Perchy.app` **and** the
+`assets` folder into the same location (e.g. `/Applications`), then
+double-click `Perchy.app`. First launch needs Accessibility
+permission — see `使用说明_macOS.txt` inside the disk image.
+
+### macOS compatibility matrix
+
+| Your macOS       | Which dmg                       | Notes                          |
+| ---------------- | ------------------------------- | ------------------------------ |
+| 15 Sequoia       | `-macos.dmg`                    | PyQt6, native performance      |
+| 14 Sonoma        | `-macos.dmg`                    | PyQt6                          |
+| 13 Ventura       | `-macos.dmg`                    | PyQt6                          |
+| 12 Monterey      | `-macos.dmg`                    | PyQt6                          |
+| 11 Big Sur       | `-macos.dmg`                    | PyQt6, minimum for modern build|
+| **10.15 Catalina** | **`-macos-legacy.dmg`**       | **PyQt5, Python 3.9**          |
+| 10.14 or older   | not supported                   | Apple dropped signing / Python |
 
 No Python or git required.
 
@@ -165,6 +183,10 @@ Watch progress under **Actions**, then grab the zips from **Releases**.
 main.py                  entry point; chdir to app dir + macOS Dock hiding
 pet_window.py            transparent overlay, image rotation, positioning
 image_manager.py         scans assets/pets, rotates every N minutes
+qt_compat.py             PyQt6-first / PyQt5-fallback shim so the same
+                         source builds against either. Aliases PyQt5's
+                         flat enums to PyQt6-style scoped ones so the
+                         downstream code stays PyQt6-style.
 active_window_tracker/   platform-dispatching active-window tracker
     __init__.py          picks _windows or _macos at import time
     _base.py             WindowState named tuple
@@ -175,6 +197,19 @@ run.bat, stop.bat        Windows convenience launchers
 build.bat                Windows local build script
 build_macos.sh           macOS local build script
 ```
+
+### Modern vs legacy macOS builds
+
+Everything except the Qt version is identical between the two macOS
+builds. The `qt_compat.py` shim lets the same `pet_window.py` etc.
+work against either PyQt5 or PyQt6:
+
+- Modern build (`-macos.dmg`) installs PyQt6 into its bundled Python
+  and never touches the PyQt5 branch of `qt_compat`.
+- Legacy build (`-macos-legacy.dmg`) installs PyQt5 into its bundled
+  Python 3.9 with `MACOSX_DEPLOYMENT_TARGET=10.15`, and
+  `qt_compat` monkey-patches PyQt5's flat enums to look like PyQt6's
+  scoped ones before any other module imports Qt symbols.
 
 ## Known limits
 

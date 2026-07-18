@@ -11,7 +11,7 @@ import os
 import sys
 from pathlib import Path
 
-from PyQt6.QtWidgets import QApplication
+from qt_compat import QApplication
 
 
 def _app_dir() -> Path:

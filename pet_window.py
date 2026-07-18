@@ -18,16 +18,20 @@ import math
 import sys
 from typing import Optional
 
-from PyQt6.QtCore import Qt, QTimer, QSize, pyqtSignal
-from PyQt6.QtGui import (
+from qt_compat import (
+    Qt,
+    QTimer,
+    QSize,
+    pyqtSignal,
     QBrush,
     QColor,
     QGuiApplication,
     QPainter,
     QPen,
     QPixmap,
+    QLabel,
+    QWidget,
 )
-from PyQt6.QtWidgets import QLabel, QWidget
 
 import config
 from active_window_tracker import ActiveWindowTracker, WindowState

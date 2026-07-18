@@ -10,8 +10,7 @@ import random
 from pathlib import Path
 from typing import List, Optional
 
-from PyQt6.QtCore import QObject, QTimer, pyqtSignal
-from PyQt6.QtGui import QPixmap
+from qt_compat import QObject, QTimer, pyqtSignal, QPixmap
 
 SUPPORTED_EXTS = {".png", ".gif", ".jpg", ".jpeg", ".webp", ".bmp"}
 

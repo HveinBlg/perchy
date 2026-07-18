@@ -163,3 +163,98 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: Perchy-*-macos.dmg
+
+  # ---------------------------------------------------------------------
+  # macOS LEGACY (10.15 Catalina compatible)
+  #   -> Perchy-vX.Y.Z-macos-legacy.dmg
+  #
+  # PyQt6 hard-requires macOS 11 (Big Sur). Users still on macOS 10.15
+  # (Catalina, EOL since 2022) get a compatible build here by
+  # substituting:
+  #     - PyQt6 -> PyQt5 5.15  (supports macOS 10.13+)
+  #     - Python 3.12 -> Python 3.9  (last version with clean 10.15
+  #                                   wheel support for our deps)
+  #     - MACOSX_DEPLOYMENT_TARGET=10.15 so the linker embeds 10.15
+  #       as the minimum system version
+  #     - LSMinimumSystemVersion=10.15 in Info.plist so Finder /
+  #       Launch Services also agree
+  # ---------------------------------------------------------------------
+  build-macos-legacy:
+    runs-on: macos-13   # Ventura runner still has Xcode SDKs that can
+                        # target 10.15 without hunting for old SDKs.
+    env:
+      MACOSX_DEPLOYMENT_TARGET: '10.15'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies (PyQt5 branch)
+        run: |
+          python -m pip install --upgrade pip
+          pip install "PyQt5>=5.15,<5.16" \
+                      "pyobjc-framework-Cocoa>=9.0" \
+                      "pyobjc-framework-Quartz>=9.0" \
+                      "pyinstaller>=5.13"
+
+      - name: Build with PyInstaller
+        run: |
+          pyinstaller --clean --noconfirm \
+            --name Perchy \
+            --windowed \
+            --noupx \
+            --osx-bundle-identifier com.hveinblg.perchy \
+            --exclude-module PyQt6 \
+            main.py
+
+      - name: Info.plist tweaks (LSUIElement + version + minimum system)
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          [ -z "$VERSION" ] && VERSION="dev-$(date -u +%Y%m%d-%H%M%S)"
+          PLIST="dist/Perchy.app/Contents/Info.plist"
+          /usr/libexec/PlistBuddy -c "Delete :LSUIElement" "$PLIST" 2>/dev/null || true
+          /usr/libexec/PlistBuddy -c "Add :LSUIElement bool true" "$PLIST"
+          /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $VERSION" "$PLIST" 2>/dev/null || \
+            /usr/libexec/PlistBuddy -c "Add :CFBundleShortVersionString string $VERSION" "$PLIST"
+          # The critical bit for 10.15 users: tell Launch Services the
+          # bundle IS OK to run on their older OS.
+          /usr/libexec/PlistBuddy -c "Set :LSMinimumSystemVersion 10.15" "$PLIST" 2>/dev/null || \
+            /usr/libexec/PlistBuddy -c "Add :LSMinimumSystemVersion string 10.15" "$PLIST"
+
+      - name: Prepare DMG staging (legacy)
+        run: |
+          rm -rf dist/dmg-staging
+          mkdir -p dist/dmg-staging
+          cp -R dist/Perchy.app dist/dmg-staging/
+          cp -R assets dist/dmg-staging/
+          [ -f "使用说明.txt" ]       && cp "使用说明.txt"       dist/dmg-staging/ || true
+          [ -f "使用说明_macOS.txt" ] && cp "使用说明_macOS.txt" dist/dmg-staging/ || true
+          ln -s /Applications "dist/dmg-staging/Applications"
+
+      - name: Create DMG (legacy)
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          [ -z "$VERSION" ] && VERSION="dev-$(date -u +%Y%m%d-%H%M%S)"
+          hdiutil create \
+            -volname "Perchy $VERSION Legacy" \
+            -srcfolder dist/dmg-staging \
+            -ov \
+            -format UDZO \
+            "Perchy-v${VERSION}-macos-legacy.dmg"
+          ls -la Perchy-*.dmg
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: perchy-macos-legacy
+          path: Perchy-*-macos-legacy.dmg
+
+      - name: Publish to Releases (tag pushes only)
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: Perchy-*-macos-legacy.dmg
