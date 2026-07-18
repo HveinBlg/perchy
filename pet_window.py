@@ -45,16 +45,12 @@ class PetWindow(QWidget):
         self.resize(*self._pet_size)
 
         # --- The pet sprite itself ---
+        # The label + widget are resized on every image change to match the
+        # scaled pixmap's real dimensions (see _on_image_changed). Starting
+        # them at 1x1 avoids a one-frame flash of a giant transparent box
+        # before the first pixmap arrives.
         self._label = QLabel(self)
-        self._label.setFixedSize(*self._pet_size)
         self._label.setStyleSheet("background: transparent;")
-        # Anchor the image to the bottom of the label so its "feet" always
-        # sit at the same y regardless of the cat's aspect ratio. Without
-        # this, a squat/wide cat (e.g. sleeping on a bed) would float
-        # noticeably higher than a tall, upright cat.
-        self._label.setAlignment(
-            Qt.AlignmentFlag.AlignBottom | Qt.AlignmentFlag.AlignHCenter
-        )
 
         # --- Image rotation ---
         self._images = ImageManager(
@@ -125,6 +121,18 @@ class PetWindow(QWidget):
         )
         self._label.setPixmap(scaled)
 
+        # Resize both the label and the pet window to the pixmap's ACTUAL
+        # scaled size (which fits within self._pet_size but may be smaller
+        # in one dimension). This is what lets the pet dock cleanly to the
+        # top of a maximised window: with a fixed 180x180 widget, a
+        # short/wide sprite would leave 60-80px of invisible transparent
+        # space above its head, and when the widget got clamped to y=0
+        # (screen top) all that padding pushed the visible cat far down
+        # into the app's toolbar.
+        new_size = scaled.size()
+        self._label.setFixedSize(new_size)
+        self.resize(new_size)
+
     def _on_tick(self) -> None:
         # If we don't have an image yet, don't bother positioning.
         if self._images.current_pixmap() is None:
@@ -140,7 +148,12 @@ class PetWindow(QWidget):
 
         left, top, right, _bottom = rect
         win_w = right - left
-        pet_w, pet_h = self._pet_size
+        # Use the widget's current dimensions (which follow the loaded
+        # sprite's real size), not the max PET_SIZE box, so positioning is
+        # tight against the actual cat rather than an invisible bounding
+        # rectangle.
+        pet_w = self.width()
+        pet_h = self.height()
 
         # Horizontal anchor along the window's top edge.
         x = left + int(win_w * self._anchor) - pet_w // 2
