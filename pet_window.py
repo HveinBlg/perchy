@@ -25,7 +25,11 @@ class PetWindow(QWidget):
         super().__init__()
 
         self._pet_size = tuple(config.PET_SIZE)
-        self._overlap = int(config.OVERLAP)
+        # OVERLAP can be a fraction (float in (0,1]) or a pixel count
+        # (int >= 2). Keep it as-is; _resolve_overlap_px() interprets it
+        # against whatever the widget's current height is.
+        self._overlap = config.OVERLAP
+        self._clamp_to_screen = bool(getattr(config, "CLAMP_TO_SCREEN", True))
         self._anchor = float(config.HORIZONTAL_ANCHOR)
 
         # --- Window flags: frameless, always on top, no taskbar entry ---
@@ -105,6 +109,24 @@ class PetWindow(QWidget):
             pass
 
     # ------------------------------------------------------------------
+    # Helpers
+    # ------------------------------------------------------------------
+    def _resolve_overlap_px(self, pet_h: int) -> int:
+        """Turn the config.OVERLAP value into an absolute pixel count.
+
+        A float in (0.0, 1.0] is interpreted as a fraction of the current
+        sprite's height (so 0.5 always bisects, whatever the sprite is).
+        Anything else is treated as an absolute pixel offset.
+        """
+        val = self._overlap
+        if isinstance(val, float) and 0.0 < val <= 1.0:
+            return int(round(pet_h * val))
+        try:
+            return int(val)
+        except (TypeError, ValueError):
+            return pet_h // 2  # fallback: bisect
+
+    # ------------------------------------------------------------------
     # Slots
     # ------------------------------------------------------------------
     def _on_image_changed(self, pixmap: Optional[QPixmap]) -> None:
@@ -157,17 +179,23 @@ class PetWindow(QWidget):
 
         # Horizontal anchor along the window's top edge.
         x = left + int(win_w * self._anchor) - pet_w // 2
-        # Vertical: pet's bottom overlaps the title bar by `overlap` pixels.
-        y = top - pet_h + self._overlap
+        # Vertical: pet's bottom overlaps the title bar by `overlap_px`
+        # pixels. When OVERLAP is a fraction, overlap_px scales with the
+        # current sprite so a wide sleeping cat and a tall waving cat get
+        # the same visual split (e.g. both bisected 50/50 by the title bar).
+        overlap_px = self._resolve_overlap_px(pet_h)
+        y = top - pet_h + overlap_px
 
-        # Keep the pet on-screen if the window is docked to the top.
-        screen = QGuiApplication.screenAt(self.pos())
-        if screen is None:
-            screen = QGuiApplication.primaryScreen()
-        if screen is not None:
-            geo = screen.geometry()
-            if y < geo.top():
-                y = geo.top()
+        # Optionally keep the pet fully on-screen when the window is
+        # docked to the top of the display.
+        if self._clamp_to_screen:
+            screen = QGuiApplication.screenAt(self.pos())
+            if screen is None:
+                screen = QGuiApplication.primaryScreen()
+            if screen is not None:
+                geo = screen.geometry()
+                if y < geo.top():
+                    y = geo.top()
 
         self.move(x, y)
         if not self.isVisible():

@@ -4,11 +4,34 @@
 # fit inside this box while keeping its aspect ratio.
 PET_SIZE = (180, 180)
 
-# How many pixels of the pet's bottom overlap the window's top edge.
-# Larger value => pet sits deeper into the title bar.
-# 30 = paws just touch the top edge; 60 = pet's butt/paws sit inside the
-# title bar (looks more like it's actually "sitting on" the window).
-OVERLAP = 60
+# How much of the pet dips INTO the window (i.e. below the window's top
+# edge). Accepts two formats:
+#
+#   * float in (0.0, 1.0]  = fraction of the pet's own height. This is
+#                            the recommended mode because the split
+#                            stays consistent no matter which sprite is
+#                            showing (tall waving cat vs. squat sleeping
+#                            cat both bisect the title bar the same way).
+#       0.5 -> half above the title bar, half below (the "sitting on
+#              the edge" look).
+#       0.33 -> one-third of the pet inside, two-thirds hanging above.
+#       1.0 -> pet sits fully inside the title bar.
+#
+#   * int >= 2  = absolute pixel offset (the pet's bottom overlaps the
+#                 title bar by exactly that many px). Provided for
+#                 backward compat / power users who want a fixed dip
+#                 regardless of sprite size.
+OVERLAP = 0.5
+
+# When the pet's ideal position would push its top edge above the top of
+# the screen (typical for maximised windows whose title bar is already
+# at y=0), what should we do?
+#   True  = clamp so the pet stays fully visible on-screen even if that
+#           breaks the OVERLAP rule for that particular frame.
+#   False = obey OVERLAP strictly; the pet's upper half may extend above
+#           the screen (invisible) when the active window is docked to
+#           the top of the display.
+CLAMP_TO_SCREEN = True
 
 # How often the pet image is randomly swapped out, in seconds.
 # Default = 3 minutes.

@@ -88,8 +88,9 @@ Edit `config.py`:
 
 | Setting              | What it does                                                 |
 | -------------------- | ------------------------------------------------------------ |
-| `PET_SIZE`           | Pet width & height in pixels (image is scaled to fit).        |
-| `OVERLAP`            | How many pixels the pet's bottom dips into the title bar.     |
+| `PET_SIZE`           | Pet max width & height in pixels (image is scaled to fit).    |
+| `OVERLAP`            | How much of the pet dips inside the window. Float in (0,1] = fraction of the sprite's height (0.5 = bisected by title bar). Int ≥ 2 = fixed pixel offset. |
+| `CLAMP_TO_SCREEN`    | If True, keep pet fully on-screen for maximised windows.      |
 | `ROTATE_SECONDS`     | How often the pet image swaps (default 180s = 3 min).         |
 | `RESCAN_SECONDS`     | How often we pick up newly added images (default 10s).        |
 | `TRACK_INTERVAL_MS`  | Follow polling interval; lower = smoother, higher = lighter.  |
