@@ -5,16 +5,17 @@ Two visual modes, chosen every tick based on the active window's state:
 - Cat mode      : the currently-selected sprite floats over the window's top
                   edge (bisected by default). Click-through is ON so the
                   cat never steals focus from the app underneath.
-- Button mode   : the active window is maximised, so the cat would either
-                  end up mostly off-screen or would deep-dive into the
-                  app's content. Instead we hide the sprite and show a
-                  small "查看猫咪状态" button; clicking it restores the
+- Button mode   : the active window is maximised, so the cat would deep-dive
+                  into the app's content. Instead we hide the sprite and
+                  show a small gently-bouncing "查看猫咪状态" pill in a
+                  blank spot on the title bar; clicking it restores the
                   window, which puts us back in cat mode automatically.
 """
 
 from __future__ import annotations
 
 import ctypes
+import math
 from typing import Optional
 
 from PyQt6.QtCore import Qt, QTimer, QSize
@@ -31,12 +32,26 @@ WS_EX_NOACTIVATE = 0x08000000  # clicks/focus never activate our window
 WS_EX_TOOLWINDOW = 0x00000080  # hide from Alt-Tab and taskbar
 WS_EX_TRANSPARENT = 0x00000020  # mouse events pass through us
 
+# --- Bounce animation parameters ---
+BOUNCE_RANGE_PX = 6           # vertical travel of the bounce (px)
+BOUNCE_FRAME_MS = 30          # ~33 fps
+BOUNCE_PHASE_STEP = 0.18      # radians per frame => ~1s per full cycle
+
+# --- Where in the maximised window's title bar we place the button ---
+# 0.5 puts it dead center, which is the blank strip between the app's
+# left-side title text and the right-side min/max/close buttons in most
+# Windows apps.
+BUTTON_HORIZONTAL_ANCHOR = 0.5
+
+# --- How far below the window's top edge the widget sits (px) ---
+BUTTON_TOP_INSET_PX = 4
+
 BUTTON_STYLE = """
     QPushButton {
         background-color: rgba(255, 255, 255, 235);
-        border: 1px solid rgba(160, 160, 160, 200);
-        border-radius: 12px;
-        padding: 5px 14px;
+        border: 1px solid rgba(150, 150, 150, 200);
+        border-radius: 11px;
+        padding: 3px 14px;
         font-size: 12px;
         color: #333;
     }
@@ -83,13 +98,24 @@ class PetWindow(QWidget):
         self._label = QLabel(self)
         self._label.setStyleSheet("background: transparent;")
 
-        # --- The "restore this window" button (shown only in button mode) ---
+        # --- The "restore this window" button (only in button mode) ---
         self._button = QPushButton("查看猫咪状态", self)
         self._button.setStyleSheet(BUTTON_STYLE)
         self._button.setCursor(Qt.CursorShape.PointingHandCursor)
         self._button.clicked.connect(self._on_restore_clicked)
         self._button.hide()
         self._button.adjustSize()
+
+        # --- Bounce animation state (drives the pill up + down in button mode) ---
+        self._bounce_timer = QTimer(self)
+        self._bounce_timer.setInterval(BOUNCE_FRAME_MS)
+        self._bounce_timer.timeout.connect(self._on_bounce_frame)
+        self._bounce_phase = 0.0
+        # Base y of the button inside the (slightly-taller) widget. The
+        # button oscillates around this baseline; the widget itself
+        # holds a fixed screen position so the app title bar underneath
+        # doesn't jitter.
+        self._button_base_y = 0
 
         # --- Image rotation ---
         self._images = ImageManager(
@@ -99,7 +125,6 @@ class PetWindow(QWidget):
             parent=self,
         )
         self._images.image_changed.connect(self._on_image_changed)
-        # Paint whatever's available right now (or nothing).
         self._on_image_changed(self._images.current_pixmap())
 
         # --- Active-window follower ---
@@ -111,9 +136,6 @@ class PetWindow(QWidget):
 
         self._ex_style_applied = False
         self._in_button_mode = False
-        # HWND of the window we're following. Saved in _enter_button_mode so
-        # the click handler can restore that specific window even if focus
-        # shifts to us for the instant of the click.
         self._tracked_hwnd: Optional[int] = None
 
     # ------------------------------------------------------------------
@@ -129,7 +151,6 @@ class PetWindow(QWidget):
     # Win32 tweaks
     # ------------------------------------------------------------------
     def _apply_win32_base_style(self) -> None:
-        """Apply NOACTIVATE + TOOLWINDOW + (initial) TRANSPARENT to the HWND."""
         try:
             hwnd = int(self.winId())
             user32 = ctypes.windll.user32
@@ -142,12 +163,7 @@ class PetWindow(QWidget):
             pass
 
     def _set_click_through(self, enabled: bool) -> None:
-        """Runtime toggle of WS_EX_TRANSPARENT.
-
-        Cat mode wants clicks to pass through so it never blocks the
-        title bar; button mode wants clicks to LAND on us so the button
-        actually works.
-        """
+        """Runtime toggle of WS_EX_TRANSPARENT (click-through)."""
         try:
             hwnd = int(self.winId())
             user32 = ctypes.windll.user32
@@ -164,17 +180,15 @@ class PetWindow(QWidget):
     # Helpers
     # ------------------------------------------------------------------
     def _resolve_overlap_px(self, pet_h: int) -> int:
-        """Interpret config.OVERLAP as either a fraction or a pixel count."""
         val = self._overlap
         if isinstance(val, float) and 0.0 < val <= 1.0:
             return int(round(pet_h * val))
         try:
             return int(val)
         except (TypeError, ValueError):
-            return pet_h // 2  # fallback: bisect
+            return pet_h // 2
 
     def _rescale_cat_to_widget(self) -> None:
-        """(Re)apply the current pixmap to the cat label and resize."""
         pix = self._images.current_pixmap()
         if pix is None or pix.isNull():
             return
@@ -193,7 +207,6 @@ class PetWindow(QWidget):
     def _on_image_changed(self, pixmap: Optional[QPixmap]) -> None:
         if pixmap is None or pixmap.isNull():
             self._label.clear()
-            # We only hide when we're not showing the button either.
             if not self._in_button_mode:
                 self.hide()
             return
@@ -205,42 +218,64 @@ class PetWindow(QWidget):
         )
         self._label.setPixmap(scaled)
         self._label.setFixedSize(scaled.size())
-        # In button mode the widget is sized to the button; don't clobber
-        # that just because a new cat rotated in behind the scenes.
         if not self._in_button_mode:
             self.resize(scaled.size())
 
     def _on_restore_clicked(self) -> None:
-        """Un-maximize the tracked window (equivalent to clicking Restore Down)."""
         hwnd = self._tracked_hwnd
         if hwnd:
             self._tracker.restore_window(hwnd)
+
+    def _on_bounce_frame(self) -> None:
+        """Move the button up/down by a fraction of BOUNCE_RANGE_PX.
+
+        Uses a cosine so y_offset smoothly cycles 0 -> BOUNCE_RANGE_PX
+        -> 0 -> BOUNCE_RANGE_PX -> ... The button rests at
+        _button_base_y (bottom of its travel) and rises up from there.
+        """
+        self._bounce_phase += BOUNCE_PHASE_STEP
+        if self._bounce_phase > 2 * math.pi:
+            self._bounce_phase -= 2 * math.pi
+        # cos maps to (1, -1); ((cos+1)/2) maps to (1, 0); *range gives
+        # (RANGE, 0). We subtract from base_y so the button *rises* from
+        # rest (smaller y == higher on screen).
+        rise = int(((math.cos(self._bounce_phase) + 1.0) * 0.5) * BOUNCE_RANGE_PX)
+        self._button.move(0, self._button_base_y - rise + BOUNCE_RANGE_PX)
 
     # ------------------------------------------------------------------
     # Mode switches
     # ------------------------------------------------------------------
     def _enter_button_mode(self, state: WindowState) -> None:
-        # Remember which window to restore when the button is clicked.
+        # Remember which window to restore when the button is clicked;
+        # refresh every tick in case the user switches between two
+        # maximised windows.
         self._tracked_hwnd = state.hwnd
 
         if not self._in_button_mode:
+            # One-time setup on transition INTO button mode
             self._label.hide()
             self._button.show()
             self._set_click_through(False)  # let the button receive clicks
             self._in_button_mode = True
 
-        btn_size = self._button.sizeHint()
-        self._button.resize(btn_size)
-        self._button.move(0, 0)
-        self.resize(btn_size)
+            btn_size = self._button.sizeHint()
+            self._button.resize(btn_size)
+            # Widget is slightly taller than the button to give room for
+            # the vertical bounce. Baseline y is BOUNCE_RANGE_PX
+            # (bottom of the widget); the bounce animates up from there.
+            self._button_base_y = 0
+            self._button.move(0, BOUNCE_RANGE_PX)  # start at rest
+            self.resize(btn_size.width(), btn_size.height() + BOUNCE_RANGE_PX)
 
-        # Anchor the button horizontally the same way the cat is anchored,
-        # so it appears where users' eyes are already looking. Vertically,
-        # slot it just inside the title bar so it's fully visible on a
-        # maximised window (top == 0).
+            # Kick off the bounce
+            self._bounce_phase = 0.0
+            self._bounce_timer.start()
+
+        # Reposition every tick (window may briefly change bounds during
+        # a monitor switch, animations, etc).
         win_w = state.right - state.left
-        x = state.left + int(win_w * self._anchor) - btn_size.width() // 2
-        y = state.top + 5
+        x = state.left + int(win_w * BUTTON_HORIZONTAL_ANCHOR) - self.width() // 2
+        y = state.top + BUTTON_TOP_INSET_PX
         self.move(x, y)
 
         if not self.isVisible():
@@ -248,29 +283,22 @@ class PetWindow(QWidget):
 
     def _enter_cat_mode(self, state: WindowState) -> None:
         if self._in_button_mode:
+            # One-time teardown on transition OUT of button mode
+            self._bounce_timer.stop()
             self._button.hide()
             self._label.show()
             if config.CLICK_THROUGH:
                 self._set_click_through(True)
             self._in_button_mode = False
-            # Widget was button-sized; snap it back to sprite size.
             self._rescale_cat_to_widget()
 
         pet_w = self.width()
         pet_h = self.height()
 
-        # Horizontal anchor along the window's top edge.
         x = state.left + int((state.right - state.left) * self._anchor) - pet_w // 2
-
-        # Vertical: pet's bottom overlaps the title bar by `overlap_px`
-        # pixels. When OVERLAP is a fraction, it scales with the sprite
-        # so wide/short and tall/narrow cats all split the title bar
-        # the same way.
         overlap_px = self._resolve_overlap_px(pet_h)
         y = state.top - pet_h + overlap_px
 
-        # Optionally keep the pet fully on-screen when the window is
-        # docked to the top of the display.
         if self._clamp_to_screen:
             screen = QGuiApplication.screenAt(self.pos())
             if screen is None:
@@ -288,9 +316,6 @@ class PetWindow(QWidget):
     # Main tick
     # ------------------------------------------------------------------
     def _on_tick(self) -> None:
-        # If there's no image loaded and we're not in button mode, don't
-        # bother showing anything. (In button mode we still want the
-        # restore button visible even if the images folder is empty.)
         if self._images.current_pixmap() is None and not self._in_button_mode:
             if self.isVisible():
                 self.hide()
