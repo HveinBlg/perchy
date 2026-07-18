@@ -1,0 +1,80 @@
+name: Build Windows release
+
+# Auto-build a self-contained Windows zip whenever:
+#   - a tag matching v* is pushed  (e.g. `git tag v1.0.0 && git push --tags`)
+#   - or someone clicks "Run workflow" in the Actions tab (manual trigger)
+#
+# The zip is attached to the GitHub Release (created automatically for tags)
+# so end-users can grab it from the repo's Releases page without needing
+# Python installed on their machine.
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write   # needed for softprops/action-gh-release to upload
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt pyinstaller
+
+      - name: Build with PyInstaller
+        run: >
+          pyinstaller --clean --noconfirm
+          --name perchy
+          --windowed
+          --noupx
+          main.py
+
+      - name: Copy user-facing files next to the exe
+        shell: cmd
+        run: |
+          xcopy /E /I /Y assets dist\perchy\assets
+          copy "使用说明.txt" dist\perchy\
+          copy stop.bat dist\perchy\
+
+      - name: Zip release
+        shell: pwsh
+        run: |
+          $version = "${{ github.ref_name }}"
+          if (-not $version) { $version = "manual-$(Get-Date -Format 'yyyyMMdd-HHmmss')" }
+          Compress-Archive -Path dist\perchy -DestinationPath "perchy-$version-windows-x64.zip" -Force
+          Get-ChildItem perchy-*.zip
+
+      - name: Upload artifact (always)
+        uses: actions/upload-artifact@v4
+        with:
+          name: perchy-windows-x64
+          path: perchy-*-windows-x64.zip
+
+      - name: Publish to Releases (tag pushes only)
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: perchy-*-windows-x64.zip
+          body: |
+            ## How to use
+
+            1. Download `perchy-${{ github.ref_name }}-windows-x64.zip` below.
+            2. Extract it anywhere (Desktop is fine).
+            3. Double-click `perchy.exe`.
+            4. Focus any window and the cat will appear on its title bar.
+
+            See `使用说明.txt` inside the zip for the full Chinese quickstart
+            (auto-start at login, adding your own pet images, etc.).

@@ -1,10 +1,20 @@
-# Desktop Pet (Windows)
+# Perchy — Desktop Pet (Windows)
 
 A tiny cartoon character that sits on top of your **currently active window**
 and follows it as you move it around. Every few minutes it changes into a
 different image picked from `assets/pets/`.
 
 Inspired by the "little guy sitting on your window" screenshots you see on 小红书.
+
+## For end users (just want to run it)
+
+Grab the latest Windows zip from the
+[Releases page](https://github.com/HveinBlg/perchy/releases), extract it,
+and double-click `perchy.exe`. No Python or git required. See
+`使用说明.txt` inside the zip for a full Chinese quickstart.
+
+Everything below is for **developers** who want to hack on the source or
+build their own zip.
 
 ## What it does
 
@@ -105,8 +115,42 @@ Edit `config.py`:
 
 A tray-icon quit menu is on the todo list.
 
+## Building a release yourself
+
+Two options:
+
+### Option A: local build (fastest)
+
+```powershell
+build.bat
+```
+
+Produces `dist\perchy\` containing `perchy.exe`, `assets/pets/`,
+`使用说明.txt`, and `stop.bat`. Zip it up and send:
+
+```powershell
+Compress-Archive -Path dist\perchy -DestinationPath perchy-windows-x64.zip -Force
+```
+
+### Option B: let GitHub Actions build it
+
+Push a tag matching `v*` and CI will build a Windows zip and attach it
+to a new GitHub Release automatically:
+
+```powershell
+git tag v1.0.0
+git push --tags
+```
+
+Watch the run under the repo's **Actions** tab, then grab the zip from
+**Releases** when it turns green.
+
 ## Known limits
 
 - Exclusive-fullscreen apps (some games) draw over the pet.
 - Only the currently focused window has a pet; unfocused windows don't.
 - Windows only — the tracker uses Win32 / DWM directly.
+- The bundled `.exe` isn't code-signed, so Windows SmartScreen will show
+  "Windows protected your PC" on first launch. Click **More info →
+  Run anyway**. If you have a code-signing certificate you can sign
+  `dist\perchy\perchy.exe` in a post-build step.
