@@ -8,7 +8,11 @@ Inspired by the "little guy sitting on your window" screenshots you see on 小�
 
 ## For end users (just want to run it)
 
-Grab the latest zip for your OS from the
+**👉 Full walkthrough in Chinese: [docs/使用指南.md](docs/使用指南.md)**
+(covers install, customisation, troubleshooting FAQ, and why you'd
+want to run it in the first place).
+
+Short version — grab the latest for your OS from the
 [Releases page](https://github.com/HveinBlg/perchy/releases):
 
 - **Windows**: download `perchy-vX.Y.Z-windows-x64.zip`, extract, double-click
