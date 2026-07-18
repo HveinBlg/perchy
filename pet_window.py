@@ -7,9 +7,9 @@ Two visual modes, chosen every tick based on the active window's state:
                   cat never steals focus from the app underneath.
 - Button mode   : the active window is maximised, so the cat would deep-dive
                   into the app's content. Instead we hide the sprite and
-                  show a small gently-bouncing "查看猫咪状态" pill in a
-                  blank spot on the title bar; clicking it restores the
-                  window, which puts us back in cat mode automatically.
+                  show a tiny string of hanging firecrackers just to the
+                  left of the minimize (—) button; clicking them restores
+                  the window, which puts us back in cat mode automatically.
 """
 
 from __future__ import annotations
@@ -18,9 +18,16 @@ import ctypes
 import math
 from typing import Optional
 
-from PyQt6.QtCore import Qt, QTimer, QSize
-from PyQt6.QtGui import QPixmap, QGuiApplication
-from PyQt6.QtWidgets import QLabel, QPushButton, QWidget
+from PyQt6.QtCore import Qt, QTimer, QSize, pyqtSignal
+from PyQt6.QtGui import (
+    QBrush,
+    QColor,
+    QGuiApplication,
+    QPainter,
+    QPen,
+    QPixmap,
+)
+from PyQt6.QtWidgets import QLabel, QWidget
 
 import config
 from active_window_tracker import ActiveWindowTracker, WindowState
@@ -32,38 +39,99 @@ WS_EX_NOACTIVATE = 0x08000000  # clicks/focus never activate our window
 WS_EX_TOOLWINDOW = 0x00000080  # hide from Alt-Tab and taskbar
 WS_EX_TRANSPARENT = 0x00000020  # mouse events pass through us
 
-# --- Bounce animation parameters ---
-BOUNCE_RANGE_PX = 6           # vertical travel of the bounce (px)
-BOUNCE_FRAME_MS = 30          # ~33 fps
-BOUNCE_PHASE_STEP = 0.18      # radians per frame => ~1s per full cycle
+# --- Swing animation parameters (firecrackers gently sway) ---
+SWING_ANGLE_DEG = 9.0        # max rotation each side of centre (degrees)
+SWING_FRAME_MS = 30          # ~33 fps
+SWING_PHASE_STEP = 0.09      # radians per frame => ~2.4s per full sway cycle
 
-# --- Where in the maximised window's title bar we place the button ---
-# 0.5 puts it dead center, which is the blank strip between the app's
-# left-side title text and the right-side min/max/close buttons in most
-# Windows apps.
-BUTTON_HORIZONTAL_ANCHOR = 0.5
+# --- Where in the maximised window we place the firecrackers ---
+# Widget's RIGHT edge is placed this many pixels left of the window's
+# right edge. The stock Windows minimise / maximise / close cluster is
+# ~138px wide; leaving ~15px extra keeps the firecrackers snug against
+# them without ever overlapping.
+BUTTON_RIGHT_INSET_PX = 150
 
-# --- How far below the window's top edge the widget sits (px) ---
-BUTTON_TOP_INSET_PX = 4
+# Vertical inset from the window's top edge (firecracker fuse sits here).
+BUTTON_TOP_INSET_PX = 2
 
-BUTTON_STYLE = """
-    QPushButton {
-        background-color: rgba(255, 255, 255, 235);
-        border: 1px solid rgba(150, 150, 150, 200);
-        border-radius: 11px;
-        padding: 3px 14px;
-        font-size: 12px;
-        color: #333;
-    }
-    QPushButton:hover {
-        background-color: rgba(255, 255, 255, 255);
-        border-color: rgba(80, 80, 80, 220);
-        color: #000;
-    }
-    QPushButton:pressed {
-        background-color: rgba(220, 220, 220, 250);
-    }
-"""
+
+class FirecrackerWidget(QWidget):
+    """A tiny string of three hanging firecrackers, drawn with QPainter.
+
+    - Emits :attr:`clicked` on left mouse press.
+    - Rotation about the top-centre pivot: set via
+      :meth:`set_swing_angle` from an animation timer.
+    """
+
+    clicked = pyqtSignal()
+
+    # Widget geometry -- wide enough to contain the string of firecrackers
+    # even at maximum swing without visual clipping.
+    W_PX = 34
+    H_PX = 52
+
+    # Firecracker body -- 3 red cylinders separated by gold bands.
+    _BODY_W = 12
+    _BODY_H = 10
+    _BAND_H = 2
+    _NUM_BODIES = 3
+    _FUSE_TOP_Y = 3       # where the spark starts (below widget's top)
+    _CLUSTER_TOP_Y = 8    # where the first firecracker starts
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setFixedSize(self.W_PX, self.H_PX)
+        self.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.setToolTip("点这里，把窗口还原，猫咪出来 🐱")
+        self._swing_angle = 0.0
+
+    def set_swing_angle(self, degrees: float) -> None:
+        self._swing_angle = degrees
+        self.update()
+
+    def mousePressEvent(self, event) -> None:
+        if event.button() == Qt.MouseButton.LeftButton:
+            self.clicked.emit()
+        super().mousePressEvent(event)
+
+    def paintEvent(self, event) -> None:  # noqa: D401 (Qt override)
+        painter = QPainter(self)
+        painter.setRenderHint(QPainter.RenderHint.Antialiasing)
+
+        # Pivot at top-centre so the whole string swings like a pendulum.
+        painter.translate(self.width() / 2, 0)
+        painter.rotate(self._swing_angle)
+
+        # --- Fuse (short line) + spark (small gold dot) at the very top ---
+        painter.setPen(QPen(QColor(160, 130, 70), 1.4))
+        painter.drawLine(0, self._FUSE_TOP_Y + 1, 0, self._CLUSTER_TOP_Y)
+        painter.setPen(Qt.PenStyle.NoPen)
+        painter.setBrush(QBrush(QColor(255, 200, 60)))
+        painter.drawEllipse(-2, self._FUSE_TOP_Y - 2, 4, 4)
+
+        # --- The stacked red firecrackers, separated by gold bands ---
+        body_color = QColor(210, 40, 40)
+        body_highlight = QColor(255, 90, 90)
+        band_color = QColor(240, 200, 60)
+        x_left = -self._BODY_W // 2
+
+        y = self._CLUSTER_TOP_Y
+        for _ in range(self._NUM_BODIES):
+            # Body: red rounded rect
+            painter.setPen(Qt.PenStyle.NoPen)
+            painter.setBrush(QBrush(body_color))
+            painter.drawRoundedRect(x_left, y, self._BODY_W, self._BODY_H, 2, 2)
+            # Subtle highlight strip on the left for a bit of shading
+            painter.setBrush(QBrush(body_highlight))
+            painter.drawRect(x_left + 1, y + 1, 2, self._BODY_H - 2)
+            # Gold band under this body
+            painter.setBrush(QBrush(band_color))
+            painter.drawRect(x_left, y + self._BODY_H, self._BODY_W, self._BAND_H)
+            y += self._BODY_H + self._BAND_H
+
+        # --- Tassel dangling at the very bottom of the string ---
+        painter.setBrush(QBrush(QColor(210, 40, 40)))
+        painter.drawEllipse(-3, y, 6, 4)
 
 
 class PetWindow(QWidget):
@@ -89,8 +157,8 @@ class PetWindow(QWidget):
         # --- Window flags: frameless, always on top, no taskbar entry.
         # We intentionally do NOT set Qt.WindowTransparentForInput here:
         # click-through is managed purely at the Win32 layer via
-        # WS_EX_TRANSPARENT so we can toggle it off when we need the
-        # "restore" button to receive clicks.
+        # WS_EX_TRANSPARENT so we can toggle it off when the firecracker
+        # needs to receive clicks.
         flags = (
             Qt.WindowType.FramelessWindowHint
             | Qt.WindowType.WindowStaysOnTopHint
@@ -106,24 +174,16 @@ class PetWindow(QWidget):
         self._label = QLabel(self)
         self._label.setStyleSheet("background: transparent;")
 
-        # --- The "restore this window" button (only in button mode) ---
-        self._button = QPushButton("查看猫咪状态", self)
-        self._button.setStyleSheet(BUTTON_STYLE)
-        self._button.setCursor(Qt.CursorShape.PointingHandCursor)
-        self._button.clicked.connect(self._on_restore_clicked)
-        self._button.hide()
-        self._button.adjustSize()
+        # --- The hanging firecracker string (shown only in button mode) ---
+        self._firecracker = FirecrackerWidget(self)
+        self._firecracker.clicked.connect(self._on_restore_clicked)
+        self._firecracker.hide()
 
-        # --- Bounce animation state (drives the pill up + down in button mode) ---
-        self._bounce_timer = QTimer(self)
-        self._bounce_timer.setInterval(BOUNCE_FRAME_MS)
-        self._bounce_timer.timeout.connect(self._on_bounce_frame)
-        self._bounce_phase = 0.0
-        # Base y of the button inside the (slightly-taller) widget. The
-        # button oscillates around this baseline; the widget itself
-        # holds a fixed screen position so the app title bar underneath
-        # doesn't jitter.
-        self._button_base_y = 0
+        # --- Swing animation state (drives the firecracker sway) ---
+        self._swing_timer = QTimer(self)
+        self._swing_timer.setInterval(SWING_FRAME_MS)
+        self._swing_timer.timeout.connect(self._on_swing_frame)
+        self._swing_phase = 0.0
 
         # --- Image rotation ---
         self._images = ImageManager(
@@ -230,55 +290,52 @@ class PetWindow(QWidget):
         if hwnd:
             self._tracker.restore_window(hwnd)
 
-    def _on_bounce_frame(self) -> None:
-        """Move the button up/down by a fraction of BOUNCE_RANGE_PX.
+    def _on_swing_frame(self) -> None:
+        """Drive the firecracker's swing angle with a smooth sine wave.
 
-        Uses a cosine so y_offset smoothly cycles 0 -> BOUNCE_RANGE_PX
-        -> 0 -> BOUNCE_RANGE_PX -> ... The button rests at
-        _button_base_y (bottom of its travel) and rises up from there.
+        Using sin() (not cos()) means the string starts vertical and
+        swings out to each side symmetrically, rather than starting
+        pinned to one side.
         """
-        self._bounce_phase += BOUNCE_PHASE_STEP
-        if self._bounce_phase > 2 * math.pi:
-            self._bounce_phase -= 2 * math.pi
-        # cos maps to (1, -1); ((cos+1)/2) maps to (1, 0); *range gives
-        # (RANGE, 0). We subtract from base_y so the button *rises* from
-        # rest (smaller y == higher on screen).
-        rise = int(((math.cos(self._bounce_phase) + 1.0) * 0.5) * BOUNCE_RANGE_PX)
-        self._button.move(0, self._button_base_y - rise + BOUNCE_RANGE_PX)
+        self._swing_phase += SWING_PHASE_STEP
+        if self._swing_phase > 2 * math.pi:
+            self._swing_phase -= 2 * math.pi
+        angle = SWING_ANGLE_DEG * math.sin(self._swing_phase)
+        self._firecracker.set_swing_angle(angle)
 
     # ------------------------------------------------------------------
     # Mode switches
     # ------------------------------------------------------------------
     def _enter_button_mode(self, state: WindowState) -> None:
-        # Remember which window to restore when the button is clicked;
-        # refresh every tick in case the user switches between two
-        # maximised windows.
+        # Remember which window to restore when the firecrackers are clicked;
+        # refreshed every tick in case the user switches between two
+        # maximised windows without going through a non-maximised state.
         self._tracked_hwnd = state.hwnd
 
         if not self._in_button_mode:
             # One-time setup on transition INTO button mode
             self._label.hide()
-            self._button.show()
-            self._set_click_through(False)  # let the button receive clicks
+            self._firecracker.show()
+            self._set_click_through(False)  # so the firecracker gets clicks
             self._in_button_mode = True
 
-            btn_size = self._button.sizeHint()
-            self._button.resize(btn_size)
-            # Widget is slightly taller than the button to give room for
-            # the vertical bounce. Baseline y is BOUNCE_RANGE_PX
-            # (bottom of the widget); the bounce animates up from there.
-            self._button_base_y = 0
-            self._button.move(0, BOUNCE_RANGE_PX)  # start at rest
-            self.resize(btn_size.width(), btn_size.height() + BOUNCE_RANGE_PX)
+            fc_w = self._firecracker.width()
+            fc_h = self._firecracker.height()
+            self._firecracker.move(0, 0)
+            self.resize(fc_w, fc_h)
 
-            # Kick off the bounce
-            self._bounce_phase = 0.0
-            self._bounce_timer.start()
+            # Kick off the swing
+            self._swing_phase = 0.0
+            self._swing_timer.start()
 
-        # Reposition every tick (window may briefly change bounds during
-        # a monitor switch, animations, etc).
-        win_w = state.right - state.left
-        x = state.left + int(win_w * BUTTON_HORIZONTAL_ANCHOR) - self.width() // 2
+        # Reposition every tick so the string stays glued to the
+        # left of the minimize (—) button as the window moves between
+        # monitors, resolutions, etc.
+        widget_w = self.width()
+        x = state.right - BUTTON_RIGHT_INSET_PX - widget_w
+        # Guard against pathological cases (widget wider than window).
+        if x < state.left:
+            x = state.left
         y = state.top + BUTTON_TOP_INSET_PX
         self.move(x, y)
 
@@ -288,8 +345,8 @@ class PetWindow(QWidget):
     def _enter_cat_mode(self, state: WindowState) -> None:
         if self._in_button_mode:
             # One-time teardown on transition OUT of button mode
-            self._bounce_timer.stop()
-            self._button.hide()
+            self._swing_timer.stop()
+            self._firecracker.hide()
             self._label.show()
             if config.CLICK_THROUGH:
                 self._set_click_through(True)
