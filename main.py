@@ -15,7 +15,7 @@ from pet_window import PetWindow
 def main() -> int:
     app = QApplication(sys.argv)
     # Don't quit when the pet is temporarily hidden (e.g. desktop is focused).
-    app.setQuitAtLastWindowClosed(False)
+    app.setQuitOnLastWindowClosed(False)
 
     pet = PetWindow()
     pet.show()

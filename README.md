@@ -23,7 +23,11 @@ Inspired by the "little guy sitting on your window" screenshots you see on 小�
 ## Requirements
 
 - Windows 10 or 11
-- Python 3.9+
+- **Python 3.9 or newer** (recommended: 3.11 or 3.12)
+  - Python 3.7 / 3.8 will NOT work — PyQt6 has no wheels for them and
+    building from source usually fails on Windows.
+  - Download from https://www.python.org/downloads/windows/ and be sure
+    to tick "Add Python to PATH" during install.
 
 ## Install
 
