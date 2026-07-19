@@ -69,18 +69,6 @@ The end-user guide with install screenshots and FAQ:
 
 ---
 
-## Star history
-
-<a href="https://star-history.com/#HveinBlg/perchy&Date">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=HveinBlg/perchy&type=Date&theme=dark" />
-    <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=HveinBlg/perchy&type=Date" />
-    <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=HveinBlg/perchy&type=Date" />
-  </picture>
-</a>
-
----
-
 ## Support the project
 
 Perchy is MIT-licensed and free forever. If it made your day less
