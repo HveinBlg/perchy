@@ -215,6 +215,31 @@ work against either PyQt5 or PyQt6:
   `qt_compat` monkey-patches PyQt5's flat enums to look like PyQt6's
   scoped ones before any other module imports Qt symbols.
 
+## License
+
+MIT for the engine code (see [LICENSE](LICENSE)). Individual
+character packs shipped as `.perchy-pack` files carry their own
+license text embedded inside the pack; buying a pack does not
+grant redistribution rights unless that pack's own license
+explicitly says so.
+
+## Character packs
+
+Users can extend Perchy by dropping `.perchy-pack` files (a
+zip-archive-with-manifest format) into the `assets/pets/` folder.
+Perchy picks them up on the next 10-second scan without a restart.
+
+The repo ships two builder utilities for pack authors:
+
+- `create_pack.py`  Command-line tool that turns a folder of PNGs
+  into a distributable `.perchy-pack`.
+- [docs/角色包制作规范.md](docs/角色包制作规范.md)  Chinese spec covering
+  image dimensions, naming conventions, the `pack.json` manifest
+  schema, license templates, and the self-check list.
+
+Sample commercial storefront copy (for 淘宝 / 爱发电 / Gumroad):
+[docs/商店文案.md](docs/商店文案.md).
+
 ## Retrospective
 
 The full one-day journey — 21 concrete pitfalls we hit, their root
