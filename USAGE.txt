@@ -1,0 +1,213 @@
+==========================================
+    Perchy - Desktop Pet Quickstart
+==========================================
+
+A tiny cat that sits on the title bar of the app you're currently
+using. Switch apps, the cat follows. Every 3 minutes it randomly
+picks a new pose from 9 built-in ones.
+
+Chinese version: see 使用说明.txt in the same folder.
+
+
+==========================================
+         Windows users read this
+==========================================
+
+
+1. How to launch
+------------------------------------------
+1. Extract this whole folder somewhere (Desktop is fine).
+2. Double-click  perchy.exe
+
+First launch, Windows will show "Windows protected your PC":
+   - Click "More info"
+   - Click "Run anyway"
+
+(The exe isn't code-signed, so SmartScreen defaults to blocking
+ unknown apps. It's not a virus -- source is public at
+ https://github.com/HveinBlg/perchy)
+
+
+2. Can't see the cat?
+------------------------------------------
+Click any window (browser, chat app, file manager, anything).
+The cat appears on that window's title bar; move the window and
+the cat follows.
+
+If you click the desktop (no window is active), the cat hides
+automatically.
+
+
+3. Auto-start on login
+------------------------------------------
+1. Press Win + R
+2. Type  shell:startup  and hit Enter
+3. Drag a shortcut to  perchy.exe  into that folder
+   (Right-click perchy.exe -> Send to -> Desktop shortcut,
+    then move that shortcut into the shell:startup folder)
+4. Next login, the cat appears automatically
+
+Disable auto-start: delete that shortcut from shell:startup.
+
+
+4. Use your own pet image
+------------------------------------------
+1. Put your PNG files (transparent background preferred)
+   into the  assets\pets  folder.
+2. To remove one, just delete the corresponding png.
+3. Perchy scans that folder every 10 seconds; no restart needed.
+
+One image = one "pet". Drop in several and Perchy rotates through
+them at random.
+
+
+5. How to stop
+------------------------------------------
+- Double-click  stop.bat
+- Or press Ctrl + Shift + Esc to open Task Manager,
+  find  perchy.exe, right-click -> End task
+
+
+
+==========================================
+          macOS users read this
+==========================================
+
+
+0. First: pick the right download
+------------------------------------------
+There are two macOS builds:
+
+  Perchy-vX.Y.Z-macos.dmg          -> modern (macOS 11 and up)
+  Perchy-vX.Y.Z-macos-legacy.dmg   -> legacy (macOS 10.15 Catalina)
+
+Check your macOS version:  Apple menu -> About This Mac
+
+  Your macOS           Which one
+  ------------------   ---------------------------
+  15  Sequoia          modern  (-macos.dmg)
+  14  Sonoma           modern
+  13  Ventura          modern
+  12  Monterey         modern
+  11  Big Sur          modern  (minimum)
+  10.15 Catalina       legacy  (-macos-legacy.dmg)
+  10.14 or older       not supported, please upgrade
+
+Both builds have identical features. The only difference is the
+internal Qt / Python version. Catalina users installing the modern
+build see "This app requires macOS 11.0 or later" -- that's when
+to grab the -legacy.dmg instead.
+
+
+1. How to install (.dmg)
+------------------------------------------
+1. Double-click the downloaded  Perchy-vX.Y.Z-macos.dmg
+   -> A Finder window pops up showing:
+        Perchy.app
+        assets   (folder)
+        Applications  (shortcut)
+        使用说明.txt  /  USAGE.txt
+
+2. Drag  Perchy.app  AND the  assets  folder to the same location.
+   Two ways to do this:
+
+   Way A (simplest, recommended):
+     Drag both to  Applications  or  Desktop.
+     -> Perchy.app and assets end up in the same folder.
+
+   Way B:
+     Drag Perchy.app onto the Applications shortcut.
+     Drag assets to  ~/Applications/  (same folder as Perchy.app).
+
+   Important: assets MUST live in the same folder as Perchy.app,
+   otherwise the pet images can't be found.
+
+3. Double-click  Perchy.app
+
+First launch, Gatekeeper will show
+"Perchy can't be opened because Apple cannot check it for
+malicious software":
+   - Right-click Perchy.app -> Open
+   - Click "Open" on the confirmation dialog
+
+Or:
+   - System Settings -> Privacy & Security
+   - Scroll to the bottom, find "Perchy was blocked"
+   - Click "Open Anyway"
+
+
+2. Grant Accessibility permission (required!)
+------------------------------------------
+Perchy needs to read other apps' window positions, so it needs
+Accessibility access:
+
+1. Open  System Settings -> Privacy & Security -> Accessibility
+2. Find Perchy (add it with the + button if not listed)
+3. Turn on the toggle
+
+Once granted, Perchy automatically follows the active window.
+Without this permission, you won't see the cat.
+
+
+3. Can't see the cat?
+------------------------------------------
+- Click any window (Safari, Chrome, Finder, anything)
+- The cat appears on that window's title bar
+- If you click the desktop (no window active), it hides
+
+If clicking any window still doesn't show a cat:
+- Double-check the Accessibility permission (step 2 above)
+- Confirm the assets folder is next to Perchy.app
+  (no assets = no images to show)
+- Quit and relaunch Perchy
+
+
+4. Auto-start on login
+------------------------------------------
+1. System Settings -> General -> Login Items
+2. Click + under "Open at Login"
+3. Choose  Perchy.app
+4. Next login, the cat appears automatically
+
+Disable auto-start: remove it from the same list.
+
+
+5. Use your own pet image
+------------------------------------------
+Put your PNG files (transparent background preferred) into the
+assets/pets/  folder that sits next to Perchy.app.
+
+To remove one, just delete the corresponding png.
+Perchy scans the folder every 10 seconds; no restart needed.
+
+One image = one "pet". Drop in several and Perchy rotates through
+them at random.
+
+
+6. How to stop
+------------------------------------------
+Perchy is a background app with no Dock icon. To quit:
+
+- Open  Activity Monitor  (Launchpad -> search "Activity Monitor")
+- Search for  Perchy
+- Select it, click the X at the top-left to force-quit
+
+
+7. What's missing on macOS
+------------------------------------------
+The "click firecrackers to restore a maximised window" easter egg
+is Windows-only for now. macOS doesn't have Windows' clean
+"maximised" state, so we haven't implemented it there yet.
+
+Everything else works identically on both platforms.
+
+
+
+==========================================
+                Trouble?
+==========================================
+
+Open an issue on GitHub:
+https://github.com/HveinBlg/perchy/issues
+
+==========================================

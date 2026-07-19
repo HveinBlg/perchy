@@ -51,8 +51,8 @@ fi
 # (Files inside the .app bundle are treated as read-only by macOS; put
 # the assets folder + docs at the same level as the .app instead.)
 cp -R assets dist/
-[ -f "使用说明.txt" ]     && cp "使用说明.txt"     dist/
-[ -f "使用说明_macOS.txt" ] && cp "使用说明_macOS.txt" dist/
+[ -f "使用说明.txt" ] && cp "使用说明.txt" dist/
+[ -f "USAGE.txt" ]    && cp "USAGE.txt"    dist/
 
 # ---- optional: also wrap it as a .dmg (macOS-native distribution format) ----
 # Users prefer .dmg on macOS: double-click mounts it, drag Perchy.app
@@ -63,8 +63,8 @@ rm -rf dist/dmg-staging
 mkdir -p dist/dmg-staging
 cp -R dist/Perchy.app dist/dmg-staging/
 cp -R dist/assets     dist/dmg-staging/
-[ -f "dist/使用说明.txt" ]       && cp "dist/使用说明.txt"       dist/dmg-staging/ || true
-[ -f "dist/使用说明_macOS.txt" ] && cp "dist/使用说明_macOS.txt" dist/dmg-staging/ || true
+[ -f "dist/使用说明.txt" ] && cp "dist/使用说明.txt" dist/dmg-staging/ || true
+[ -f "dist/USAGE.txt" ]    && cp "dist/USAGE.txt"    dist/dmg-staging/ || true
 ln -s /Applications dist/dmg-staging/Applications
 
 hdiutil create \

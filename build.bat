@@ -40,6 +40,7 @@ pyinstaller --clean --noconfirm ^
 REM ---- copy user-facing files next to the exe ----
 xcopy /E /I /Y assets dist\perchy\assets >nul
 if exist "使用说明.txt" copy /Y "使用说明.txt" dist\perchy\ >nul
+if exist USAGE.txt      copy /Y USAGE.txt      dist\perchy\ >nul
 if exist stop.bat       copy /Y stop.bat       dist\perchy\ >nul
 
 echo.

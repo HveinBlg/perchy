@@ -50,6 +50,7 @@ jobs:
         run: |
           xcopy /E /I /Y assets dist\perchy\assets
           copy "使用说明.txt" dist\perchy\
+          copy USAGE.txt dist\perchy\
           copy stop.bat dist\perchy\
 
       - name: Zip release
@@ -77,13 +78,18 @@ jobs:
             **Windows**: Download `perchy-${{ github.ref_name }}-windows-x64.zip`
             below, extract, and double-click `perchy.exe`.
 
-            **macOS**: Download `Perchy-${{ github.ref_name }}-macos.zip`,
-            extract, and double-click `Perchy.app`. The first launch
-            requires granting Accessibility permission -- see
-            `使用说明_macOS.txt` inside the zip.
+            **macOS 11+**: Download `Perchy-${{ github.ref_name }}-macos.dmg`,
+            mount, drag `Perchy.app` and the `assets` folder to the same
+            location, then double-click `Perchy.app`. First launch
+            requires granting Accessibility permission.
 
-            See `使用说明.txt` for the full Chinese quickstart (auto-start
-            at login, adding your own pet images, etc.).
+            **macOS 10.15 Catalina**: Download `Perchy-${{ github.ref_name }}-macos-legacy.dmg`
+            instead. Same steps.
+
+            See `USAGE.txt` (English) or `使用说明.txt` (Chinese) inside
+            the download for the full quickstart -- both Windows and
+            macOS sections, plus auto-start setup, custom pet images,
+            and troubleshooting.
 
   # ---------------------------------------------------------------------
   # macOS (Apple Silicon)  ->  Perchy-vX.Y.Z-macos.dmg
@@ -134,8 +140,8 @@ jobs:
           # launched. Users can drop their own PNGs into
           # dmg-staging/assets/pets/ after installing.
           cp -R assets dist/dmg-staging/
-          [ -f "使用说明.txt" ]       && cp "使用说明.txt"       dist/dmg-staging/ || true
-          [ -f "使用说明_macOS.txt" ] && cp "使用说明_macOS.txt" dist/dmg-staging/ || true
+          [ -f "使用说明.txt" ] && cp "使用说明.txt" dist/dmg-staging/ || true
+          [ -f "USAGE.txt" ]    && cp "USAGE.txt"    dist/dmg-staging/ || true
           # Handy shortcut so users can drag Perchy.app straight to /Applications.
           ln -s /Applications "dist/dmg-staging/Applications"
 
@@ -231,8 +237,8 @@ jobs:
           mkdir -p dist/dmg-staging
           cp -R dist/Perchy.app dist/dmg-staging/
           cp -R assets dist/dmg-staging/
-          [ -f "使用说明.txt" ]       && cp "使用说明.txt"       dist/dmg-staging/ || true
-          [ -f "使用说明_macOS.txt" ] && cp "使用说明_macOS.txt" dist/dmg-staging/ || true
+          [ -f "使用说明.txt" ] && cp "使用说明.txt" dist/dmg-staging/ || true
+          [ -f "USAGE.txt" ]    && cp "USAGE.txt"    dist/dmg-staging/ || true
           ln -s /Applications "dist/dmg-staging/Applications"
 
       - name: Create DMG (legacy)
