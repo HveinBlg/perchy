@@ -1,33 +1,153 @@
-# Perchy — Desktop Pet (Windows + macOS)
+<h1 align="center">🐱 Perchy</h1>
 
-A tiny cartoon character that sits on top of your **currently active window**
-and follows it as you move it around. Every few minutes it changes into a
-different image picked from `assets/pets/`.
+<p align="center">
+  <b>A desktop pet that follows your active window.</b><br>
+  <i>Switch Chrome → cat follows. Switch VS Code → cat's there. Switch Slack → cat's still with you.</i>
+</p>
 
-Inspired by the "little guy sitting on your window" screenshots you see on 小红书.
+<p align="center">
+  <a href="https://github.com/HveinBlg/perchy/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License MIT"></a>
+  <img src="https://img.shields.io/badge/platform-Windows%20%7C%20macOS-lightgrey" alt="Platform">
+  <a href="https://github.com/HveinBlg/perchy/releases/latest"><img src="https://img.shields.io/github/v/release/HveinBlg/perchy" alt="Latest release"></a>
+  <a href="https://github.com/HveinBlg/perchy/stargazers"><img src="https://img.shields.io/github/stars/HveinBlg/perchy?style=social" alt="Stars"></a>
+</p>
 
-## For end users (just want to run it)
+<p align="center">
+  <a href="docs/使用指南.md">📘 中文说明</a>
+  ·
+  <a href="https://github.com/HveinBlg/perchy/releases/latest">⬇️ Download</a>
+  ·
+  <a href="docs/项目复盘.md">📝 21 pitfalls we hit</a>
+  ·
+  <a href="#-support-the-project">💰 Support</a>
+</p>
 
-**👉 Full walkthrough in Chinese: [docs/使用指南.md](docs/使用指南.md)**
-(covers install, customisation, troubleshooting FAQ, and why you'd
-want to run it in the first place).
+<p align="center">
+  <!-- Demo GIF: record your screen switching between 3-4 apps and drop it here. -->
+  <!-- Save as docs/demo.gif and reference it with <img src="docs/demo.gif" width="600"/> -->
+  <i>[Demo GIF — replace with a 5-10s screen recording of the cat following windows]</i>
+</p>
 
-Short version — grab the latest for your OS from the
-[Releases page](https://github.com/HveinBlg/perchy/releases):
+---
 
-- **Windows**: download `perchy-vX.Y.Z-windows-x64.zip`, extract, double-click
-  `perchy.exe`. Full quickstart in `使用说明.txt` inside the zip.
-- **macOS (Big Sur 11 or newer)**: download
-  `Perchy-vX.Y.Z-macos.dmg`. Built against PyQt6 + Python 3.12.
-- **macOS (Catalina 10.15)**: download
-  `Perchy-vX.Y.Z-macos-legacy.dmg`. Built against PyQt5 + Python 3.9
-  with `LSMinimumSystemVersion=10.15`. Same features and UX as the
-  modern build.
+## ✨ What makes it special
 
-Either dmg: double-click to mount, drag `Perchy.app` **and** the
-`assets` folder into the same location (e.g. `/Applications`), then
-double-click `Perchy.app`. First launch needs Accessibility
-permission — see `使用说明_macOS.txt` inside the disk image.
+- 🎯 **Follows the active window** — the cat sits on whatever app you're using RIGHT NOW, not on a fixed screen position
+- 🖱️ **Click-through** — clicks pass through the cat to the buttons underneath, so the title bar still works normally
+- 👻 **No taskbar / Dock icon**, **no focus stealing**, **no Alt-Tab entry** — the pet stays out of your way
+- 🎨 **DIY-friendly, free forever** — drop any transparent PNG into `assets/pets/` and it's your pet
+- 📦 **`.perchy-pack` support** — one-file installs for character packs; make your own with `create_pack.py`
+- 🌍 **Cross-platform** — Windows 10/11, macOS 11+, and a special legacy build for macOS 10.15 Catalina
+- 🧨 **Windows: firecracker easter egg** — maximise a window and the cat turns into a swinging string of firecrackers; click them to restore
+
+Perchy is **inspired by the "little guy sitting on your window" screenshots** on 小红书, turned into something that actually runs.
+
+---
+
+## 📥 Download
+
+The end-user guide with install screenshots + FAQ:
+**[docs/使用指南.md](docs/使用指南.md)** (Chinese)
+
+| Your OS | File | Notes |
+|---|---|---|
+| Windows 10 / 11 | [`perchy-vX.Y.Z-windows-x64.zip`](https://github.com/HveinBlg/perchy/releases/latest) | Extract → `perchy.exe` |
+| macOS 11+ (Big Sur → Sequoia) | [`Perchy-vX.Y.Z-macos.dmg`](https://github.com/HveinBlg/perchy/releases/latest) | Mount → drag app + assets to `/Applications` |
+| macOS 10.15 Catalina | [`Perchy-vX.Y.Z-macos-legacy.dmg`](https://github.com/HveinBlg/perchy/releases/latest) | PyQt5-based build for older Macs |
+
+**macOS reminder**: first launch needs Accessibility permission (System Settings → Privacy & Security → Accessibility → add Perchy).
+
+---
+
+## 🌟 Star History
+
+<a href="https://star-history.com/#HveinBlg/perchy&Date">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=HveinBlg/perchy&type=Date&theme=dark" />
+    <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=HveinBlg/perchy&type=Date" />
+    <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=HveinBlg/perchy&type=Date" />
+  </picture>
+</a>
+
+---
+
+## 💰 Support the project
+
+Perchy is **MIT-licensed and free forever**. If it made your day less
+grumpy, consider any of these:
+
+- ⭐ **Star this repo** — signals to me + others that it's worth
+  maintaining
+- 🐛 **[Report bugs / request features](https://github.com/HveinBlg/perchy/issues)** — the more real-world signal, the better
+- 🎨 **Contribute pet art** — open a PR adding your PNGs to
+  `assets/pets/community/`
+- 💰 **Buy a character pack** *(coming soon)* — official packs will
+  live in the [Releases page](https://github.com/HveinBlg/perchy/releases). Buying them literally pays for the next
+  round of art commissions
+- ☕ **Tip me** *(TBD)* — 爱发电 / Ko-fi links coming when the project
+  gets its first 100 stars
+
+---
+
+## 🛠️ For developers
+
+Perchy is 100% MIT — fork it, ship your own, or contribute back.
+
+### Running from source
+
+```bash
+python -m venv .venv
+# Windows:  .venv\Scripts\activate
+# macOS:    source .venv/bin/activate
+pip install -r requirements.txt
+python main.py
+```
+
+Python 3.9+ required (3.11 / 3.12 recommended).
+
+### Convenience launchers (Windows)
+
+- `run.bat` — start Perchy in the background (no terminal)
+- `stop.bat` — kill every Perchy process (handles both source-mode
+  `python.exe` and the packaged `perchy.exe`)
+
+### What lives where
+
+```
+main.py                     entry point; chdir + macOS Dock hiding
+pet_window.py               transparent overlay, image rotation, positioning
+image_manager.py            scans assets/pets/, rotates every N minutes,
+                            loads .perchy-pack archives
+qt_compat.py                PyQt6-first / PyQt5-fallback shim; lets one
+                            source tree build against either Qt version
+active_window_tracker/      platform-dispatching active-window tracker
+    __init__.py             chooses _windows or _macos at import time
+    _base.py                WindowState NamedTuple
+    _windows.py             Win32 + DWM via ctypes
+    _macos.py               AppKit + AXUIElement via pyobjc
+config.py                   user-tunable settings
+create_pack.py              CLI: package a folder of PNGs into a
+                            .perchy-pack for distribution
+run.bat, stop.bat           Windows launchers
+build.bat / build_macos.sh  local packaging scripts
+.github/workflows/          three-platform CI (Windows + macOS +
+                            macOS legacy)
+```
+
+### Tuning
+
+Edit `config.py`:
+
+| Setting              | What it does                                                 |
+| -------------------- | ------------------------------------------------------------ |
+| `PET_SIZE`           | Pet max width & height in pixels (image is scaled to fit).    |
+| `OVERLAP`            | Float in (0,1] = fraction of sprite height dipped into title bar (0.5 = bisected). Int ≥ 2 = fixed pixel offset. |
+| `CLAMP_TO_SCREEN`    | If True, keep pet fully on-screen for maximised windows.      |
+| `ROTATE_SECONDS`     | How often the pet image swaps (default 180s = 3 min).         |
+| `RESCAN_SECONDS`     | How often we pick up newly added images (default 10s).        |
+| `TRACK_INTERVAL_MS`  | Follow polling interval; lower = smoother, higher = lighter.  |
+| `HORIZONTAL_ANCHOR`  | 0.0 = left edge, 0.5 = center, 1.0 = right edge.              |
+| `CLICK_THROUGH`      | Whether clicks pass through the pet.                          |
 
 ### macOS compatibility matrix
 
@@ -41,236 +161,73 @@ permission — see `使用说明_macOS.txt` inside the disk image.
 | **10.15 Catalina** | **`-macos-legacy.dmg`**       | **PyQt5, Python 3.9**          |
 | 10.14 or older   | not supported                   | Apple dropped signing / Python |
 
-No Python or git required.
+### Building a release yourself
 
-Everything below is for **developers** who want to hack on the source or
-build their own zip.
+Option A: local build
 
-## What it does
+- **Windows**: `build.bat` — produces `dist\perchy\perchy.exe` and friends
+- **macOS**: `./build_macos.sh v1.2.3` — produces `dist/Perchy.app` + a `.dmg`
 
-- Tracks the **currently focused** top-level window
-  - Windows: Win32 `GetForegroundWindow` + DWM extended-frame-bounds
-  - macOS: `NSWorkspace.frontmostApplication` + Accessibility API
-    (`AXFocusedWindow`, `AXPosition`, `AXSize`)
-- Draws a **transparent, always-on-top, frameless** window with your pet image.
-- Positions the pet on the window's top edge, right-anchored by default,
-  bisected by the title bar so half sits above and half inside.
-- **Click-through**: the pet doesn't block clicks on the title bar / close button.
-- **No focus stealing**: uses `WS_EX_NOACTIVATE` (Windows) /
-  `WA_ShowWithoutActivating` (both).
-- **No taskbar / Dock entry**: `WS_EX_TOOLWINDOW` on Windows,
-  `LSUIElement=YES` + `NSApplicationActivationPolicyAccessory` on macOS.
-- Skips the desktop, taskbar, and minimised/cloaked windows.
-- **Auto-rotates** the pet image every N minutes (configurable).
-- **Hot-reloads** the images folder every 10s, so you can drop new PNGs
-  in while it's running.
-- **Firecracker restore hint on maximised windows** — Windows only for now.
-  On macOS the pet just stays in "cat mode" whether or not the window is
-  zoomed.
-
-## Requirements
-
-- **Windows 10 or 11** (any recent hardware), OR
-- **macOS 12+** (Apple Silicon or Intel; grants Accessibility permission)
-- **Python 3.9 or newer** (recommended: 3.11 or 3.12)
-  - Python 3.7 / 3.8 will NOT work — PyQt6 has no wheels for them and
-    building from source usually fails on Windows.
-
-## Install (from source)
+Option B: tag & push, let GitHub Actions do it
 
 ```bash
-python -m venv .venv
-# Windows:  .venv\Scripts\activate
-# macOS:    source .venv/bin/activate
-pip install -r requirements.txt
-```
-
-The `requirements.txt` conditionally installs pyobjc on macOS.
-
-## Add pet images
-
-Drop any number of PNG / GIF / JPG / WEBP files into `assets/pets/`.
-Transparent-background PNGs look best. The pet will randomly cycle through
-every image in that folder.
-
-## Run
-
-### Windows
-
-**Foreground (dev mode)** — good for tweaking `config.py`, terminal shows errors:
-```powershell
-python main.py
-```
-
-**Background** — no terminal needed:
-```powershell
-start pythonw main.py
-```
-or just double-click `run.bat`. Stop with `stop.bat` or Task Manager
-(→ `pythonw.exe`).
-
-**Auto-start at login**: `Win+R` → `shell:startup` → drop a shortcut to
-`run.bat` in that folder.
-
-### macOS
-
-**First-time**: run once and grant Accessibility permission:
-```bash
-python main.py
-```
-System Settings → Privacy & Security → Accessibility → add Perchy /
-your terminal / your Python interpreter. **Without this, no windows are
-tracked and you'll never see the cat.**
-
-**Background** — the frozen `.app` hides itself from the Dock automatically.
-When running from source you can either just leave `python main.py`
-running in a terminal, or wrap it in a launchd `.plist` for auto-start.
-
-**Auto-start at login**: System Settings → General → Login Items → `+`,
-select `Perchy.app`.
-
-**Quit**: Activity Monitor → search "Perchy" → force quit. (A menu-bar
-quit item is on the todo list.)
-
-## Tuning
-
-Edit `config.py`:
-
-| Setting              | What it does                                                 |
-| -------------------- | ------------------------------------------------------------ |
-| `PET_SIZE`           | Pet max width & height in pixels (image is scaled to fit).    |
-| `OVERLAP`            | How much of the pet dips inside the window. Float in (0,1] = fraction of the sprite's height (0.5 = bisected by title bar). Int ≥ 2 = fixed pixel offset. |
-| `CLAMP_TO_SCREEN`    | If True, keep pet fully on-screen for maximised windows.      |
-| `ROTATE_SECONDS`     | How often the pet image swaps (default 180s = 3 min).         |
-| `RESCAN_SECONDS`     | How often we pick up newly added images (default 10s).        |
-| `TRACK_INTERVAL_MS`  | Follow polling interval; lower = smoother, higher = lighter.  |
-| `HORIZONTAL_ANCHOR`  | 0.0 = left edge, 0.5 = center, 1.0 = right edge.              |
-| `CLICK_THROUGH`      | Whether clicks pass through the pet.                          |
-
-## Building a release yourself
-
-### Option A: local build
-
-**Windows**:
-```powershell
-build.bat
-```
-Produces `dist\perchy\` containing `perchy.exe`, `assets/pets/`,
-`使用说明.txt`, and `stop.bat`. Zip it up:
-```powershell
-Compress-Archive -Path dist\perchy -DestinationPath perchy-windows-x64.zip -Force
-```
-
-**macOS**:
-```bash
-./build_macos.sh v1.2.2
-```
-Produces both `dist/Perchy.app` (raw bundle) and
-`dist/Perchy-v1.2.2-macos.dmg` (compressed disk image ready to
-share — double-click to mount, drag app to Applications). The version
-string is only used for the DMG filename + Info.plist; pass whatever
-tag you're building for.
-
-### Option B: let GitHub Actions build both
-
-Push a tag matching `v*` and CI will build a Windows zip AND a macOS zip
-and attach both to a new GitHub Release automatically:
-```bash
-git tag v1.2.0
+git tag v1.4.0
 git push --tags
 ```
-Watch progress under **Actions**, then grab the zips from **Releases**.
 
-## Architecture
+The CI builds Windows + macOS (modern) + macOS (legacy) in parallel and attaches all three artifacts to the release page automatically.
 
-```
-main.py                  entry point; chdir to app dir + macOS Dock hiding
-pet_window.py            transparent overlay, image rotation, positioning
-image_manager.py         scans assets/pets, rotates every N minutes
-qt_compat.py             PyQt6-first / PyQt5-fallback shim so the same
-                         source builds against either. Aliases PyQt5's
-                         flat enums to PyQt6-style scoped ones so the
-                         downstream code stays PyQt6-style.
-active_window_tracker/   platform-dispatching active-window tracker
-    __init__.py          picks _windows or _macos at import time
-    _base.py             WindowState named tuple
-    _windows.py          Win32 + DWM via ctypes
-    _macos.py            AppKit + AXUIElement via pyobjc
-config.py                user-tunable settings
-run.bat, stop.bat        Windows convenience launchers
-build.bat                Windows local build script
-build_macos.sh           macOS local build script
-```
+---
 
-### Modern vs legacy macOS builds
+## 📄 License
 
-Everything except the Qt version is identical between the two macOS
-builds. The `qt_compat.py` shim lets the same `pet_window.py` etc.
-work against either PyQt5 or PyQt6:
+**Engine code**: [MIT](LICENSE) — free to fork, modify, and redistribute.
 
-- Modern build (`-macos.dmg`) installs PyQt6 into its bundled Python
-  and never touches the PyQt5 branch of `qt_compat`.
-- Legacy build (`-macos-legacy.dmg`) installs PyQt5 into its bundled
-  Python 3.9 with `MACOSX_DEPLOYMENT_TARGET=10.15`, and
-  `qt_compat` monkey-patches PyQt5's flat enums to look like PyQt6's
-  scoped ones before any other module imports Qt symbols.
+**Character art** (`.perchy-pack` files): each pack carries its own license text embedded inside. Buying a pack does not automatically grant redistribution rights — see the pack's own `LICENSE.txt`.
 
-## License
+**Bundled sample cats** (the 9 English Shorthair PNGs in `assets/pets/`): AI-generated, provided for personal use with the engine.
 
-MIT for the engine code (see [LICENSE](LICENSE)). Individual
-character packs shipped as `.perchy-pack` files carry their own
-license text embedded inside the pack; buying a pack does not
-grant redistribution rights unless that pack's own license
-explicitly says so.
+---
 
-## Character packs
+## 📚 More docs
 
-Users can extend Perchy by dropping `.perchy-pack` files (a
-zip-archive-with-manifest format) into the `assets/pets/` folder.
-Perchy picks them up on the next 10-second scan without a restart.
+- **[使用指南](docs/使用指南.md)** — end-user quickstart with FAQ (Chinese)
+- **[项目复盘](docs/项目复盘.md)** — 21 concrete pitfalls we hit in a
+  single day, with root causes + fixes + reusable lessons
+- **[角色包制作规范](docs/角色包制作规范.md)** — how to author a
+  `.perchy-pack` for distribution (image sizes, naming, manifest,
+  licensing templates)
+- **[商店文案](docs/商店文案.md)** — copy templates for selling packs on
+  淘宝 / 爱发电 / Gumroad / Product Hunt
 
-The repo ships two builder utilities for pack authors:
+---
 
-- `create_pack.py`  Command-line tool that turns a folder of PNGs
-  into a distributable `.perchy-pack`.
-- [docs/角色包制作规范.md](docs/角色包制作规范.md)  Chinese spec covering
-  image dimensions, naming conventions, the `pack.json` manifest
-  schema, license templates, and the self-check list.
+## 🐣 Contributing
 
-Sample commercial storefront copy (for 淘宝 / 爱发电 / Gumroad):
-[docs/商店文案.md](docs/商店文案.md).
+Contributions welcome, especially:
 
-## Retrospective
+- **Pet art** — drop your PNGs into a subfolder under `assets/pets/`
+  (say `assets/pets/community-shibas/`) and open a PR
+- **Bug reports** with screenshots + `python main.py` output
+- **Linux support** — the tracker is a platform-dispatching package;
+  add an `active_window_tracker/_linux.py` and it'll slot in
+- **Docs** — especially English translations of the Chinese guides
 
-The full one-day journey — 21 concrete pitfalls we hit, their root
-causes, fixes, and lessons — is captured in Chinese here:
+---
 
-**[docs/项目复盘.md](docs/项目复盘.md)**
+## 🚧 Known limits
 
-Categories:
-
-- Environment & toolchain (Python 3.7 vs PyQt6, sandbox network limits)
-- Image processing (premultiplied alpha, background detection)
-- UI positioning (invisible padding, bisect logic, maximised-window sink)
-- Code bugs (init order, Qt method typos)
-- Git & branches (revert-then-merge conflicts, wrong-branch commits)
-- Packaging & distribution (stop.bat vs perchy.exe, SmartScreen, dmg vs zip)
-- macOS legacy support (PyQt5 fallback, LSMinimumSystemVersion)
-
-## Known limits
-
-- Exclusive-fullscreen apps (some games) draw over the pet.
-- Only the currently focused window has a pet; unfocused windows don't.
-- The bundled `.exe` / `.app` aren't code-signed:
-  - **Windows** SmartScreen: click *More info → Run anyway*.
-  - **macOS** Gatekeeper: right-click → *Open* on first launch.
-- **macOS-specific**:
-  - Requires **Accessibility permission** (System Settings → Privacy &
-    Security → Accessibility) — this is a per-app permission and
-    macOS doesn't offer any way to skip it.
-  - `is_maximized` is always False on macOS today, so the firecracker
-    restore hint doesn't show. macOS doesn't have Windows' clean
-    "maximised" state; a proper detection needs to compare window
-    bounds to the target screen's visible frame, and a proper
-    "restore" needs to press the zoom (green) button via AXPress.
-    Both are planned.
+- **Exclusive-fullscreen** apps (some games) draw over the pet — this
+  is an OS limitation, use borderless-windowed mode instead.
+- **Unsigned binaries** — Windows SmartScreen and macOS Gatekeeper will
+  complain on first launch. Bypass instructions in
+  [使用指南](docs/使用指南.md). Signing costs $99-$500/year and we
+  won't invest until the project has real traction.
+- **macOS 10.15 legacy** carries all the modern build's features
+  except that Apple removed some APIs; we haven't hit any yet but
+  file an issue if you do.
+- **`is_maximized` is always False on macOS** — macOS doesn't have
+  Windows' clean "maximised" state, so the firecracker restore hint
+  is Windows-only for now.
+- **No single-instance lock** — running Perchy twice gets you two
+  cats. On the todo list.
