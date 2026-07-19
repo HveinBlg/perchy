@@ -13,18 +13,14 @@
 </p>
 
 <p align="center">
-  <a href="docs/使用指南.md">中文说明</a>
-  &nbsp;·&nbsp;
   <a href="https://github.com/HveinBlg/perchy/releases/latest">Download</a>
-  &nbsp;·&nbsp;
-  <a href="docs/项目复盘.md">Retrospective</a>
   &nbsp;·&nbsp;
   <a href="#support-the-project">Support</a>
 </p>
 
 <p align="center">
   <!-- Demo GIF: record your screen switching between 3-4 apps and drop it here. -->
-  <!-- Save as docs/demo.gif and reference it with <img src="docs/demo.gif" width="600"/> -->
+  <!-- Save as demo.gif at the repo root and reference it with <img src="demo.gif" width="600"/> -->
   <i>[Demo GIF — replace with a 5-10s screen recording of the cat following windows]</i>
 </p>
 
@@ -54,9 +50,6 @@ screenshots on 小红书, turned into something that actually runs.
 ---
 
 ## Download
-
-The end-user guide with install screenshots and FAQ:
-[docs/使用指南.md](docs/使用指南.md) (Chinese).
 
 | Your OS | File | Notes |
 |---|---|---|
@@ -193,19 +186,6 @@ engine.
 
 ---
 
-## More docs
-
-- [使用指南](docs/使用指南.md) — end-user quickstart with FAQ (Chinese).
-- [项目复盘](docs/项目复盘.md) — 21 concrete pitfalls we hit in a
-  single day, with root causes, fixes, and reusable lessons.
-- [角色包制作规范](docs/角色包制作规范.md) — how to author a
-  `.perchy-pack` for distribution (image sizes, naming, manifest,
-  licensing templates).
-- [商店文案](docs/商店文案.md) — copy templates for selling packs on
-  淘宝 / 爱发电 / Gumroad / Product Hunt.
-
----
-
 ## Contributing
 
 Contributions welcome, especially:
@@ -224,9 +204,11 @@ Contributions welcome, especially:
 - **Exclusive-fullscreen apps** (some games) draw over the pet. This
   is an OS limitation. Use borderless-windowed mode instead.
 - **Unsigned binaries** — Windows SmartScreen and macOS Gatekeeper
-  will complain on first launch. Bypass instructions are in
-  [使用指南](docs/使用指南.md). Signing costs $99-$500 per year and
-  we won't invest until the project has real traction.
+  will complain on first launch. On Windows: click *More info →
+  Run anyway*. On macOS: right-click the app → *Open* → click
+  *Open* on the confirmation dialog (one-time bypass). Signing
+  costs $99-$500 per year and we won't invest until the project
+  has real traction.
 - **macOS 10.15 legacy** carries all the modern build's features
   except that Apple removed some APIs; we haven't hit any yet but
   file an issue if you do.
