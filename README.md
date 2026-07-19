@@ -1,8 +1,8 @@
-<h1 align="center">🐱 Perchy</h1>
+<h1 align="center">Perchy</h1>
 
 <p align="center">
   <b>A desktop pet that follows your active window.</b><br>
-  <i>Switch Chrome → cat follows. Switch VS Code → cat's there. Switch Slack → cat's still with you.</i>
+  <i>Switch Chrome, cat follows. Switch VS Code, cat's there. Switch Slack, cat's still with you.</i>
 </p>
 
 <p align="center">
@@ -13,13 +13,13 @@
 </p>
 
 <p align="center">
-  <a href="docs/使用指南.md">📘 中文说明</a>
-  ·
-  <a href="https://github.com/HveinBlg/perchy/releases/latest">⬇️ Download</a>
-  ·
-  <a href="docs/项目复盘.md">📝 21 pitfalls we hit</a>
-  ·
-  <a href="#-support-the-project">💰 Support</a>
+  <a href="docs/使用指南.md">中文说明</a>
+  &nbsp;·&nbsp;
+  <a href="https://github.com/HveinBlg/perchy/releases/latest">Download</a>
+  &nbsp;·&nbsp;
+  <a href="docs/项目复盘.md">Retrospective</a>
+  &nbsp;·&nbsp;
+  <a href="#support-the-project">Support</a>
 </p>
 
 <p align="center">
@@ -30,36 +30,46 @@
 
 ---
 
-## ✨ What makes it special
+## What makes it special
 
-- 🎯 **Follows the active window** — the cat sits on whatever app you're using RIGHT NOW, not on a fixed screen position
-- 🖱️ **Click-through** — clicks pass through the cat to the buttons underneath, so the title bar still works normally
-- 👻 **No taskbar / Dock icon**, **no focus stealing**, **no Alt-Tab entry** — the pet stays out of your way
-- 🎨 **DIY-friendly, free forever** — drop any transparent PNG into `assets/pets/` and it's your pet
-- 📦 **`.perchy-pack` support** — one-file installs for character packs; make your own with `create_pack.py`
-- 🌍 **Cross-platform** — Windows 10/11, macOS 11+, and a special legacy build for macOS 10.15 Catalina
-- 🧨 **Windows: firecracker easter egg** — maximise a window and the cat turns into a swinging string of firecrackers; click them to restore
+- **Follows the active window.** The cat sits on whatever app you're
+  using right now, not on a fixed screen position.
+- **Click-through.** Clicks pass through to the buttons underneath,
+  so the title bar still works normally.
+- **No taskbar or Dock icon, no focus stealing, no Alt-Tab entry.**
+  The pet stays out of the way.
+- **DIY-friendly, free forever.** Drop any transparent PNG into
+  `assets/pets/` and it becomes your pet.
+- **`.perchy-pack` support.** One-file installs for character packs;
+  create your own with `create_pack.py`.
+- **Cross-platform.** Windows 10/11, macOS 11+, and a special legacy
+  build for macOS 10.15 Catalina.
+- **Firecracker easter egg on Windows.** Maximise a window and the
+  cat turns into a swinging string of firecrackers. Click them to
+  restore the window and bring the cat back.
 
-Perchy is **inspired by the "little guy sitting on your window" screenshots** on 小红书, turned into something that actually runs.
+Perchy is inspired by the "little guy sitting on your window"
+screenshots on 小红书, turned into something that actually runs.
 
 ---
 
-## 📥 Download
+## Download
 
-The end-user guide with install screenshots + FAQ:
-**[docs/使用指南.md](docs/使用指南.md)** (Chinese)
+The end-user guide with install screenshots and FAQ:
+[docs/使用指南.md](docs/使用指南.md) (Chinese).
 
 | Your OS | File | Notes |
 |---|---|---|
-| Windows 10 / 11 | [`perchy-vX.Y.Z-windows-x64.zip`](https://github.com/HveinBlg/perchy/releases/latest) | Extract → `perchy.exe` |
-| macOS 11+ (Big Sur → Sequoia) | [`Perchy-vX.Y.Z-macos.dmg`](https://github.com/HveinBlg/perchy/releases/latest) | Mount → drag app + assets to `/Applications` |
-| macOS 10.15 Catalina | [`Perchy-vX.Y.Z-macos-legacy.dmg`](https://github.com/HveinBlg/perchy/releases/latest) | PyQt5-based build for older Macs |
+| Windows 10 / 11 | [`perchy-vX.Y.Z-windows-x64.zip`](https://github.com/HveinBlg/perchy/releases/latest) | Extract, run `perchy.exe`. |
+| macOS 11+ (Big Sur through Sequoia) | [`Perchy-vX.Y.Z-macos.dmg`](https://github.com/HveinBlg/perchy/releases/latest) | Mount, drag `Perchy.app` and `assets/` to `/Applications`. |
+| macOS 10.15 Catalina | [`Perchy-vX.Y.Z-macos-legacy.dmg`](https://github.com/HveinBlg/perchy/releases/latest) | PyQt5-based build for older Macs. |
 
-**macOS reminder**: first launch needs Accessibility permission (System Settings → Privacy & Security → Accessibility → add Perchy).
+**macOS reminder:** first launch needs Accessibility permission
+(System Settings → Privacy & Security → Accessibility → add Perchy).
 
 ---
 
-## 🌟 Star History
+## Star history
 
 <a href="https://star-history.com/#HveinBlg/perchy&Date">
   <picture>
@@ -71,25 +81,26 @@ The end-user guide with install screenshots + FAQ:
 
 ---
 
-## 💰 Support the project
+## Support the project
 
-Perchy is **MIT-licensed and free forever**. If it made your day less
+Perchy is MIT-licensed and free forever. If it made your day less
 grumpy, consider any of these:
 
-- ⭐ **Star this repo** — signals to me + others that it's worth
-  maintaining
-- 🐛 **[Report bugs / request features](https://github.com/HveinBlg/perchy/issues)** — the more real-world signal, the better
-- 🎨 **Contribute pet art** — open a PR adding your PNGs to
-  `assets/pets/community/`
-- 💰 **Buy a character pack** *(coming soon)* — official packs will
-  live in the [Releases page](https://github.com/HveinBlg/perchy/releases). Buying them literally pays for the next
-  round of art commissions
-- ☕ **Tip me** *(TBD)* — 爱发电 / Ko-fi links coming when the project
-  gets its first 100 stars
+- **Star this repo** — signals to me and others that it's worth
+  maintaining.
+- **[Report bugs or request features](https://github.com/HveinBlg/perchy/issues).**
+  Real-world signal beats guesswork.
+- **Contribute pet art** — open a PR adding your PNGs to
+  `assets/pets/community/`.
+- **Buy a character pack** *(coming soon)* — official packs will
+  live on the [Releases page](https://github.com/HveinBlg/perchy/releases). Buying them literally pays
+  for the next round of art commissions.
+- **Tip me** *(TBD)* — 爱发电 / Ko-fi links coming when the project
+  gets its first 100 stars.
 
 ---
 
-## 🛠️ For developers
+## For developers
 
 Perchy is 100% MIT — fork it, ship your own, or contribute back.
 
@@ -103,13 +114,13 @@ pip install -r requirements.txt
 python main.py
 ```
 
-Python 3.9+ required (3.11 / 3.12 recommended).
+Python 3.9 or newer required. 3.11 or 3.12 recommended.
 
 ### Convenience launchers (Windows)
 
-- `run.bat` — start Perchy in the background (no terminal)
+- `run.bat` — start Perchy in the background (no terminal).
 - `stop.bat` — kill every Perchy process (handles both source-mode
-  `python.exe` and the packaged `perchy.exe`)
+  `python.exe` and the packaged `perchy.exe`).
 
 ### What lives where
 
@@ -140,7 +151,7 @@ Edit `config.py`:
 
 | Setting              | What it does                                                 |
 | -------------------- | ------------------------------------------------------------ |
-| `PET_SIZE`           | Pet max width & height in pixels (image is scaled to fit).    |
+| `PET_SIZE`           | Pet max width and height in pixels (image scales to fit).     |
 | `OVERLAP`            | Float in (0,1] = fraction of sprite height dipped into title bar (0.5 = bisected). Int ≥ 2 = fixed pixel offset. |
 | `CLAMP_TO_SCREEN`    | If True, keep pet fully on-screen for maximised windows.      |
 | `ROTATE_SECONDS`     | How often the pet image swaps (default 180s = 3 min).         |
@@ -153,76 +164,81 @@ Edit `config.py`:
 
 | Your macOS       | Which dmg                       | Notes                          |
 | ---------------- | ------------------------------- | ------------------------------ |
-| 15 Sequoia       | `-macos.dmg`                    | PyQt6, native performance      |
-| 14 Sonoma        | `-macos.dmg`                    | PyQt6                          |
-| 13 Ventura       | `-macos.dmg`                    | PyQt6                          |
-| 12 Monterey      | `-macos.dmg`                    | PyQt6                          |
-| 11 Big Sur       | `-macos.dmg`                    | PyQt6, minimum for modern build|
-| **10.15 Catalina** | **`-macos-legacy.dmg`**       | **PyQt5, Python 3.9**          |
-| 10.14 or older   | not supported                   | Apple dropped signing / Python |
+| 15 Sequoia       | `-macos.dmg`                    | PyQt6, native performance.     |
+| 14 Sonoma        | `-macos.dmg`                    | PyQt6.                         |
+| 13 Ventura       | `-macos.dmg`                    | PyQt6.                         |
+| 12 Monterey      | `-macos.dmg`                    | PyQt6.                         |
+| 11 Big Sur       | `-macos.dmg`                    | PyQt6, minimum for modern build. |
+| **10.15 Catalina** | **`-macos-legacy.dmg`**       | **PyQt5, Python 3.9.**         |
+| 10.14 or older   | not supported                   | Apple dropped signing / Python. |
 
 ### Building a release yourself
 
-Option A: local build
+**Option A: local build**
 
-- **Windows**: `build.bat` — produces `dist\perchy\perchy.exe` and friends
-- **macOS**: `./build_macos.sh v1.2.3` — produces `dist/Perchy.app` + a `.dmg`
+- Windows: `build.bat` — produces `dist\perchy\perchy.exe` and friends.
+- macOS: `./build_macos.sh v1.2.3` — produces `dist/Perchy.app` and a `.dmg`.
 
-Option B: tag & push, let GitHub Actions do it
+**Option B: tag and push, let GitHub Actions do it**
 
 ```bash
 git tag v1.4.0
 git push --tags
 ```
 
-The CI builds Windows + macOS (modern) + macOS (legacy) in parallel and attaches all three artifacts to the release page automatically.
+CI builds Windows, macOS modern, and macOS legacy in parallel and
+attaches all three artifacts to the release page automatically.
 
 ---
 
-## 📄 License
+## License
 
-**Engine code**: [MIT](LICENSE) — free to fork, modify, and redistribute.
+**Engine code:** [MIT](LICENSE). Free to fork, modify, and redistribute.
 
-**Character art** (`.perchy-pack` files): each pack carries its own license text embedded inside. Buying a pack does not automatically grant redistribution rights — see the pack's own `LICENSE.txt`.
+**Character art (`.perchy-pack` files):** each pack carries its own
+license text embedded inside. Buying a pack does not automatically
+grant redistribution rights — see the pack's own `LICENSE.txt`.
 
-**Bundled sample cats** (the 9 English Shorthair PNGs in `assets/pets/`): AI-generated, provided for personal use with the engine.
+**Bundled sample cats** (the nine English Shorthair PNGs in
+`assets/pets/`): AI-generated, provided for personal use with the
+engine.
 
 ---
 
-## 📚 More docs
+## More docs
 
-- **[使用指南](docs/使用指南.md)** — end-user quickstart with FAQ (Chinese)
-- **[项目复盘](docs/项目复盘.md)** — 21 concrete pitfalls we hit in a
-  single day, with root causes + fixes + reusable lessons
-- **[角色包制作规范](docs/角色包制作规范.md)** — how to author a
+- [使用指南](docs/使用指南.md) — end-user quickstart with FAQ (Chinese).
+- [项目复盘](docs/项目复盘.md) — 21 concrete pitfalls we hit in a
+  single day, with root causes, fixes, and reusable lessons.
+- [角色包制作规范](docs/角色包制作规范.md) — how to author a
   `.perchy-pack` for distribution (image sizes, naming, manifest,
-  licensing templates)
-- **[商店文案](docs/商店文案.md)** — copy templates for selling packs on
-  淘宝 / 爱发电 / Gumroad / Product Hunt
+  licensing templates).
+- [商店文案](docs/商店文案.md) — copy templates for selling packs on
+  淘宝 / 爱发电 / Gumroad / Product Hunt.
 
 ---
 
-## 🐣 Contributing
+## Contributing
 
 Contributions welcome, especially:
 
 - **Pet art** — drop your PNGs into a subfolder under `assets/pets/`
-  (say `assets/pets/community-shibas/`) and open a PR
-- **Bug reports** with screenshots + `python main.py` output
+  (say `assets/pets/community-shibas/`) and open a PR.
+- **Bug reports** with screenshots and `python main.py` output.
 - **Linux support** — the tracker is a platform-dispatching package;
-  add an `active_window_tracker/_linux.py` and it'll slot in
-- **Docs** — especially English translations of the Chinese guides
+  add `active_window_tracker/_linux.py` and it slots in.
+- **Docs** — especially English translations of the Chinese guides.
 
 ---
 
-## 🚧 Known limits
+## Known limits
 
-- **Exclusive-fullscreen** apps (some games) draw over the pet — this
-  is an OS limitation, use borderless-windowed mode instead.
-- **Unsigned binaries** — Windows SmartScreen and macOS Gatekeeper will
-  complain on first launch. Bypass instructions in
-  [使用指南](docs/使用指南.md). Signing costs $99-$500/year and we
-  won't invest until the project has real traction.
+- **Exclusive-fullscreen apps** (some games) draw over the pet. This
+  is an OS limitation. Use borderless-windowed mode instead.
+- **Unsigned binaries** — Windows SmartScreen and macOS Gatekeeper
+  will complain on first launch. Bypass instructions are in
+  [使用指南](docs/使用指南.md). Signing costs $99-$500 per year and
+  we won't invest until the project has real traction.
 - **macOS 10.15 legacy** carries all the modern build's features
   except that Apple removed some APIs; we haven't hit any yet but
   file an issue if you do.

@@ -96,7 +96,7 @@ class FirecrackerWidget(QWidget):
         super().__init__(parent)
         self.setFixedSize(self.W_PX, self.H_PX)
         self.setCursor(Qt.CursorShape.PointingHandCursor)
-        self.setToolTip("点这里，把窗口还原，猫咪出来 🐱")
+        self.setToolTip("点这里，把窗口还原")
         self._swing_angle = 0.0
 
     def set_swing_angle(self, degrees: float) -> None:
