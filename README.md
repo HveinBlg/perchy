@@ -36,8 +36,8 @@
   The pet stays out of the way.
 - **DIY-friendly, free forever.** Drop any transparent PNG into
   `assets/pets/` and it becomes your pet.
-- **`.perchy-pack` support.** One-file installs for character packs;
-  create your own with `create_pack.py`.
+- **`.perchy-pack` support.** One-file installs for character packs
+  (any zip with a `pack.json` and an `images/` folder works).
 - **Cross-platform.** Windows 10/11, macOS 11+, and a special legacy
   build for macOS 10.15 Catalina.
 - **Firecracker easter egg on Windows.** Maximise a window and the
@@ -118,8 +118,6 @@ active_window_tracker/      platform-dispatching active-window tracker
     _windows.py             Win32 + DWM via ctypes
     _macos.py               AppKit + AXUIElement via pyobjc
 config.py                   user-tunable settings
-create_pack.py              CLI: package a folder of PNGs into a
-                            .perchy-pack for distribution
 run.bat, stop.bat           Windows launchers
 build.bat / build_macos.sh  local packaging scripts
 .github/workflows/          three-platform CI (Windows + macOS +
